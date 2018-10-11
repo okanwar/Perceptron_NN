@@ -20,13 +20,13 @@ public class PerceptronSettings{
 	public PerceptronSettings(){
 		this("", "", false, -1, -1, -1, -1);		
 	}
-	
+
 	public PerceptronSettings(String [] settings){
 		this(settings[0], settings[3], Boolean.valueOf(settings[1]), Integer.parseInt(settings[2]), Double.parseDouble(settings[4]), Double.parseDouble(settings[5]), Double.parseDouble(settings[6]));
-}	
+	}	
 
 	public PerceptronSettings( String trainingFile, String weightsFile, boolean randomWeightValues,
-		int maxEpochs, double learningRate, double thresholdTheta, double thresholdWeightChanges){
+			int maxEpochs, double learningRate, double thresholdTheta, double thresholdWeightChanges){
 		this.trainingFile = trainingFile;
 		this.weightsFile = weightsFile;
 		this.randomWeightValues = randomWeightValues;
@@ -86,6 +86,34 @@ public class PerceptronSettings{
 	public String [] getSettings(){
 		return new String[]{trainingFile, String.valueOf(randomWeightValues), String.valueOf(maxEpochs), 
 			weightsFile, String.valueOf(learningRate), String.valueOf(thresholdTheta), String.valueOf(thresholdWeightChanges)};
+	}
+
+	public String getTrainingFile(){
+		return trainingFile;
+	}
+	
+	public String getWeightsFile(){
+		return weightsFile;
+	}
+
+	public boolean initializeWithRandomWeights(){
+		return randomWeightValues;
+	}
+
+	public int getMaxEpochs(){
+		return maxEpochs;
+	}
+
+	public double getLearningRate(){
+		return learningRate;
+	}
+
+	public double getThresholdTheta(){
+		return thresholdTheta;
+	}
+
+	public double getWeightChangesThreshold(){
+		return thresholdWeightChanges;
 	}
 
 	private boolean validLearningRate(){
