@@ -36,20 +36,22 @@ public class Perceptron{
 				if( !line.isEmpty() ){
 					if(sampleIndex < linesOfInputPattern){
 						//Reading input pattern
-						inputPattern += line.trim();
+						inputPattern += line + " ";
 					} else if(sampleIndex == linesOfInputPattern){
 						//Reading output pattern
-						outputPattern = line.trim();
+						outputPattern = line + " ";
 					} else {
 						//Reading classification
-						classification = line.trim();
+						classification = line;
+
+						//Create new training pair
+						TrainingPair p1 = new TrainingPair(sampleSettings[0], sampleSettings[1]);
+						p1.getStrings(inputPattern, outputPattern, classification);
 
 						//Reset
 						sampleIndex = 0;
 						inputPattern = "";
 						outputPattern = "";
-						
-						//Create new training pair
 
 						continue;
 					}
