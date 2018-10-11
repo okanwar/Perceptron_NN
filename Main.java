@@ -11,7 +11,7 @@ public class Main{
 			String mainPrompt = "---- Welcome to the perceptron net ----\n" +
 				"(1) Train a new perceptron net\n" +
 				"(2) Train a net from file\n";
-			
+
 			//Get mode
 			Scanner input = new Scanner(System.in);
 			System.out.println(mainPrompt);
@@ -19,37 +19,71 @@ public class Main{
 
 			if(mode == 1){
 				//New net from scratch
-			String [] prompts = new String[] {
-				"Enter the training data file name:",
-				"--- Initialized weight values ---\n" +
-					"(1) Initialize weights to 0\n" +
-					"(2) Initialize weights to random values between (-0.5,0.5)\n:",
-				"Enter the maximum number of training epochs:",
-				"Enter a file name to save the trained weight settings:",
-				"Enter the learning rate alpha between 0 and 1, not including 0:",
-				"Enter the threshold theta:",
-				"Enter the threshold for measuring weight changes:"
-			};
+				String [] prompts = new String[] {
+					"Enter the training data file name:",
+						"--- Initialized weight values ---\n" +
+							"(1) Initialize weights to 0\n" +
+							"(2) Initialize weights to random values between (-0.5,0.5)\n:",
+						"Enter the maximum number of training epochs:",
+						"Enter a file name to save the trained weight settings:",
+						"Enter the learning rate alpha between 0 and 1, not including 0:",
+						"Enter the threshold theta:",
+						"Enter the threshold for measuring weight changes:"
+				};
 
-			String [] netSettings = getNetSettings(prompts);
-			printNetInitializationSettings(netSettings);
+				String [] netSettings = getNetSettings(prompts);
+
+				//Validate net settings
+				
+				//Create net
+				printNetInitializationSettings(netSettings);
 			} else {
 				//Load from file
 			}
 		} else {
 			//Run with specifications from file
+			String userRunsFile = args[0];
+
+			//Try to open file
+			BufferedReader reader = null;
+			String line = "";
+			try{
+				reader = new BufferedReader( new FileReader(userRunsFile));	
+				while( (line = reader.readLine()) != null ){
+					//Determine mode
+					if( line.charAt(0) == '1' ){
+						//Extract net settings
+						String [] userSettings = new String[7];
+						StringTokenizer st = new StringTokenizer(line, " ");
+						st.nextToken(); 	//Skip first token, it is just the mode
+						int index = 0;
+						while(st.hasMoreTokens()){
+							userSettings[index] = st.nextToken();
+							index++;	
+						}
+						//Validate net settings
+
+						//Create net
+						printNetInitializationSettings(userSettings);
+					} else {
+						//Load net from file
+					}
+				}
+			} catch (Exception e){
+
+			}
 		}
 	}
 
 	private static void printNetInitializationSettings(String [] userSettings){
 		String [] variables = new String[]{
 			"Training File",
-			"Initialize weights to random values",
-			"Maximum number of training epochs",
-			"Weight settings file",
-			"Learning rate",
-			"Threshold theta",
-			"Threshold to measure weight changes"
+				"Initialize weights to random values",
+				"Maximum number of training epochs",
+				"Weight settings file",
+				"Learning rate",
+				"Threshold theta",
+				"Threshold to measure weight changes"
 		};
 
 		System.out.println("Initializing net with settings:");
