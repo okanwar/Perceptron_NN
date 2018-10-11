@@ -55,6 +55,9 @@ public class Main{
 						//Initialize perceptron with parsed settings
 						perceptronSettings = new PerceptronSettings(userSettings);
 						printNetInitializationSettings(perceptronSettings.getSettings());
+
+						Perceptron p1 = new Perceptron(perceptronSettings);	
+						p1.train();
 					} else {
 						//Load net from file
 					}
