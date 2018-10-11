@@ -17,7 +17,7 @@ public class Main{
 			System.out.println(mainPrompt);
 			int mode = input.nextInt();
 
-			PerceotronSettings perceptronSettings = new PerceotronSettings();
+			PerceptronSettings perceptronSettings = new PerceptronSettings();
 
 			if(mode == 1){
 				//New net from scratch
@@ -39,7 +39,7 @@ public class Main{
 				reader = new BufferedReader( new FileReader(userRunsFile));	
 				while( (line = reader.readLine()) != null ){
 					//New perceptron
-					PerceotronSettings perceptronSettings = null;
+					PerceptronSettings perceptronSettings = null;
 
 					//Determine mode
 					if( line.charAt(0) == '1' ){
@@ -53,7 +53,7 @@ public class Main{
 							index++;	
 						}
 						//Initialize perceptron with parsed settings
-						perceptronSettings = new PerceotronSettings(userSettings);
+						perceptronSettings = new PerceptronSettings(userSettings);
 						printNetInitializationSettings(perceptronSettings.getSettings());
 					} else {
 						//Load net from file

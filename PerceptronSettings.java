@@ -1,5 +1,5 @@
 import java.util.Scanner;
-import java.lang.String;
+import java.lang.*;
 
 public class PerceptronSettings{
 	private static final String TRAINING_PROMPT = "Enter the training data file name:";
@@ -22,8 +22,8 @@ public class PerceptronSettings{
 	}
 	
 	public PerceptronSettings(String [] settings){
-		this(settings[0], settings[3], settings[1], settings[2], settings[4], settings[5], settings[6]);
-	}
+		this(settings[0], settings[3], Boolean.valueOf(settings[1]), Integer.parseInt(settings[2]), Double.parseDouble(settings[4]), Double.parseDouble(settings[5]), Double.parseDouble(settings[6]));
+}	
 
 	public PerceptronSettings( String trainingFile, String weightsFile, boolean randomWeightValues,
 		int maxEpochs, double learningRate, double thresholdTheta, double thresholdWeightChanges){
@@ -47,7 +47,7 @@ public class PerceptronSettings{
 
 		//Random weights
 		System.out.print(INITIALIZED_WEIGHTS_PROMPT);
-		if(input.nextInt()){
+		if(input.nextInt() == 1){
 			randomWeightValues = true;
 		} else {
 			randomWeightValues = false;
@@ -69,7 +69,7 @@ public class PerceptronSettings{
 			System.out.print(LEARNING_RATE_PROMPT);
 			learningRate = input.nextDouble();
 			System.out.println();
-		} while (!validLearningRate);
+		} while (!validLearningRate());
 
 		//threshold theta
 		System.out.print(THRESHOLD_THETA_PROMPT);
@@ -81,11 +81,10 @@ public class PerceptronSettings{
 		thresholdWeightChanges = input.nextDouble();
 		System.out.println();
 
-		return netSettings;
 	}
 
 	public String [] getSettings(){
-		return {trainingFile, String.valueOf(randomWeightValues), String.valueOf(maxEpochs), 
+		return new String[]{trainingFile, String.valueOf(randomWeightValues), String.valueOf(maxEpochs), 
 			weightsFile, String.valueOf(learningRate), String.valueOf(thresholdTheta), String.valueOf(thresholdWeightChanges)};
 	}
 
