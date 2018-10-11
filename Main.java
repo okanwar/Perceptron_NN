@@ -17,26 +17,14 @@ public class Main{
 			System.out.println(mainPrompt);
 			int mode = input.nextInt();
 
+			PerceotronSettings perceptronSettings = new PerceotronSettings();
+
 			if(mode == 1){
 				//New net from scratch
-				String [] prompts = new String[] {
-					"Enter the training data file name:",
-						"--- Initialized weight values ---\n" +
-							"(1) Initialize weights to 0\n" +
-							"(2) Initialize weights to random values between (-0.5,0.5)\n:",
-						"Enter the maximum number of training epochs:",
-						"Enter a file name to save the trained weight settings:",
-						"Enter the learning rate alpha between 0 and 1, not including 0:",
-						"Enter the threshold theta:",
-						"Enter the threshold for measuring weight changes:"
-				};
-
-				String [] netSettings = getNetSettings(prompts);
-
-				//Validate net settings
+				perceptronSettings.setSettings();
 				
 				//Create net
-				printNetInitializationSettings(netSettings);
+				printNetInitializationSettings(perceptronSettings.getSettings());
 			} else {
 				//Load from file
 			}
@@ -50,6 +38,9 @@ public class Main{
 			try{
 				reader = new BufferedReader( new FileReader(userRunsFile));	
 				while( (line = reader.readLine()) != null ){
+					//New perceptron
+					PerceotronSettings perceptronSettings = null;
+
 					//Determine mode
 					if( line.charAt(0) == '1' ){
 						//Extract net settings
@@ -61,10 +52,9 @@ public class Main{
 							userSettings[index] = st.nextToken();
 							index++;	
 						}
-						//Validate net settings
-
-						//Create net
-						printNetInitializationSettings(userSettings);
+						//Initialize perceptron with parsed settings
+						perceptronSettings = new PerceotronSettings(userSettings);
+						printNetInitializationSettings(perceptronSettings.getSettings());
 					} else {
 						//Load net from file
 					}
@@ -94,16 +84,16 @@ public class Main{
 		System.out.println("------------------------------------");
 	}
 
-	private static String [] getNetSettings(String [] prompts){
-		String [] netSettings = new String[prompts.length];
-		Scanner input = new Scanner(System.in);
+	// private static String [] getNetSettings(String [] prompts){
+	// 	String [] netSettings = new String[prompts.length];
+	// 	Scanner input = new Scanner(System.in);
 
-		for(int i = 0; i < prompts.length; i++){
-			System.out.print(prompts[i]);
-			netSettings[i] = input.next();
-			System.out.println();
-		}
-		return netSettings;
-	}
+	// 	for(int i = 0; i < prompts.length; i++){
+	// 		System.out.print(prompts[i]);
+	// 		netSettings[i] = input.next();
+	// 		System.out.println();
+	// 	}
+	// 	return netSettings;
+	// }
 
 }
