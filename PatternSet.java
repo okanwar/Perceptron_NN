@@ -2,28 +2,43 @@ import java.io.*;
 import java.util.*;
 import java.lang.*;
 
-public class TrainingSet{
+public class PatternSet{
 
 	private String trainingFile, deploymentFile;
-	private TrainingPair[] trainingSet;
-	private boolean setFull;
-	
-	public TrainingSet(String trainingFile, String deploymentFile){
-		this.trainingFile = trainingFile;
-		this.deploymentFile = deploymentFile;
+	private Pattern[] trainingSet;
+	private Pattern[] deploymentSet;
+	private double[] weights;
+	private boolean isTrainingSet;
 
-		if(trainingFile != null){
+	public PatternSet(String file, boolean trainingSet){
+		if(trainingSet){
+			this.trainingFile = file;
+			this.isTrainingSet = true;
+			this.deploymentFile = null;
+
+			//Load training set
 			loadTrainingSet();
 			printTrainingSet();
+		} else {
+			this.trainingFile = null;
+			this.isTrainingSet = false;
+			this.deploymentFile = file;
+			this.weights = null;
 		}
-	}
 
-	public void deployNet(){
 
 	}
 
-	public void trainNet(){
+	public Pattern[] getPatternSet(){	
+		return trainingSet;
+	}
 
+	public boolean isTrainingSet(){
+		return isTrainingSet;
+	}
+	
+	public double[] getWeights(){
+		return weights;
 	}
 
 	private void loadTrainingSet(){
@@ -34,18 +49,18 @@ public class TrainingSet{
 		try {
 			reader = new BufferedReader (new FileReader (trainingFile));
 			int firstThreeLines = 0;
-			int [] sampleSettings = new int[3];
 
 			//Read first three lines
-			for(int i= 0; i < 3; i++){
-				sampleSettings[i] = Integer.parseInt(reader.readLine());
-			}
+			int inputPatternSize = Integer.parseInt(reader.readLine());
+			int outputPatternSize = Integer.parseInt(reader.readLine());
+			int numberOfTrainingPatterns = Integer.parseInt(reader.readLine());
 
 			//Setup training set
-			trainingSet = new TrainingPair[sampleSettings[2]];
+			weights = new double[inputPatternSize];
+			trainingSet = new Pattern[numberOfTrainingPatterns];
 
 			//Begin reading training pairs
-			int linesOfInputPattern = sampleSettings[0] / sampleSettings[1];
+			int linesOfInputPattern = inputPatternSize / outputPatternSize; 
 			int sampleIndex = 0;
 			int trainingSetIndex = 0;
 			String inputPattern = "";
@@ -66,7 +81,7 @@ public class TrainingSet{
 						classification = line;
 
 						//Create new training pair
-						TrainingPair p1 = new TrainingPair(sampleSettings[0], sampleSettings[1]);
+						Pattern p1 = new Pattern(inputPatternSize, outputPatternSize);
 						p1.getStrings(inputPattern, outputPattern, classification);
 						trainingSet[trainingSetIndex]  = p1;
 						trainingSetIndex++;
@@ -85,7 +100,7 @@ public class TrainingSet{
 			System.out.println("Error parsing file. " + e);
 		}
 	}
-	
+
 	public void printTrainingSet(){
 		if(trainingSet != null){
 			System.out.println("--- Training Set ---");
@@ -95,5 +110,5 @@ public class TrainingSet{
 		}
 	}
 
-	
+
 }

@@ -1,14 +1,14 @@
 import java.util.*;
 
-public class TrainingPair{
+public class Pattern{
 
-	private String[] input_array;
-	private String[] output_array;
+	private int[] input_array;
+	private int[] output_array;
 	private String classification_string; 
 
-	public TrainingPair(int inputPatternSize, int outputPatternSize){
-		input_array = new String[inputPatternSize];
-		output_array = new String[outputPatternSize];
+	public Pattern(int inputPatternSize, int outputPatternSize){
+		input_array = new int[inputPatternSize];
+		output_array = new int[outputPatternSize];
 		classification_string = "";	
 	}
 
@@ -17,17 +17,25 @@ public class TrainingPair{
 		StringTokenizer st = new StringTokenizer(input_string, " ");
 		int n = 0;
 		while(st.hasMoreTokens()) {
-			input_array[n] = st.nextToken();
+			input_array[n] = Integer.parseInt(st.nextToken());
 			n++;
 		}
 		st = new StringTokenizer(output_string, " ");
 		int m = 0;
 		while(st.hasMoreTokens()) {
-			output_array[m] = st.nextToken();
+			output_array[m] = Integer.parseInt(st.nextToken());
 			m++;
 		}
 		classification_string = classification;
 
+	}
+	
+	public int inputAt(int index){
+		return input_array[index];
+	}
+
+	public int outputAt(int index){
+		return output_array[index];
 	}
 
 	public void printPair(){

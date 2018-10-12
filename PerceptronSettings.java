@@ -106,6 +106,14 @@ public class PerceptronSettings{
 	public String getTrainingFile(){
 		return trainingFile;
 	}
+
+	public boolean hasTrainingFile(){
+		if(trainingFile != null){
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 	public String getWeightsFile(){
 		return weightsFile;

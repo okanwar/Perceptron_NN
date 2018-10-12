@@ -24,7 +24,6 @@ public class Main{
 				perceptronSettings.setSettings();
 				
 				//Create net
-				// printNetInitializationSettings(perceptronSettings.getSettings());
 				trainPerceptronFromSettings(perceptronSettings);
 			} else {
 				//Load from file
@@ -44,7 +43,7 @@ public class Main{
 
 					//Determine mode
 					if( line.charAt(0) == '1' ){
-						//Extract net settings
+						//Extract net settings from file
 						String [] userSettings = new String[7];
 						StringTokenizer st = new StringTokenizer(line, " ");
 						st.nextToken(); 	//Skip first token, it is just the mode
@@ -54,12 +53,7 @@ public class Main{
 							index++;	
 						}
 						//Initialize perceptron with parsed settings
-						perceptronSettings = new PerceptronSettings(userSettings);
-						// printNetInitializationSettings(perceptronSettings.getSettings());
-
-						// Perceptron p1 = new Perceptron(perceptronSettings);	
-						// p1.train();
-						trainPerceptronFromSettings(perceptronSettings);
+						trainPerceptronFromSettings(new PerceptronSettings(userSettings));
 					} else {
 						//Load net from file
 					}
