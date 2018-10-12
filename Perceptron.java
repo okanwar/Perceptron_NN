@@ -3,7 +3,8 @@ import java.util.*;
 import java.lang.*;
 
 public class Perceptron{
-	private  PerceptronSettings p_settings;
+	private PerceptronSettings p_settings;
+	private TrainingSet trainingDate;
 	private double[] weights;
 
 	public Perceptron(PerceptronSettings p_settings){
