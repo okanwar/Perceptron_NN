@@ -83,18 +83,18 @@ public class PerceptronSettings{
 
 	}
 
-	private static void printNetInitializationSettings(){
+	public void printNetInitializationSettings(){
 
 		System.out.println("Initializing net with settings:");
 		System.out.println("------------------------------------");
-		System.out.println("Training File: " + trainingFile +
-			"Initialize weights to random values: " +  randomWeightValues +
-			"Maximum number of training epochs: " + maxEpochs +
-			"Weight settings file: " + weightsFile +
-			"Learning rate: " + learningRate +
-			"Threshold theta: " + thresholdTheta +
+		System.out.println("Training File: " + trainingFile + "\n" +
+			"Initialize weights to random values: " +  randomWeightValues + "\n" +
+			"Maximum number of training epochs: " + maxEpochs + "\n" +
+			"Weight settings file: " + weightsFile + "\n" +
+			"Learning rate: " + learningRate + "\n" +
+			"Threshold theta: " + thresholdTheta + "\n" +
 			"Threshold to measure weight changes: " + thresholdWeightChanges
-			)
+			);
 		System.out.println("------------------------------------");
 	}
 

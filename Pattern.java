@@ -14,7 +14,6 @@ public class TrainingPair{
 
 	public void getStrings(String input_string, String output_string, String classification) {
 
-		System.out.println(input_string + "\n" + output_string);
 		StringTokenizer st = new StringTokenizer(input_string, " ");
 		int n = 0;
 		while(st.hasMoreTokens()) {
@@ -32,17 +31,18 @@ public class TrainingPair{
 	}
 
 	public void printPair(){
-		for(int i = 0; i < input_array.length){
+		for(int i = 0; i < input_array.length; i++){
 			System.out.print(input_array[i] + " ");
-			if( i % output_array.length == 0){
+			if( (i+1) % output_array.length == 0){
 				System.out.println();
 			}
 		}
+		System.out.println();
 
-		for(int j = 0; j < output_array.length(); j++){
+		for(int j = 0; j < output_array.length; j++){
 			System.out.print(output_array[j] + " ");
 		}
-		System.out.println("\n" + classification_string);
+		System.out.println("\n" + classification_string + "\n");
 	}
 
 }
