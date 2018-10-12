@@ -4,11 +4,13 @@ import java.lang.*;
 
 public class Perceptron{
 	private PerceptronSettings p_settings;
-	private TrainingSet trainingDate;
+	private TrainingSet trainingSet;
 	private double[] weights;
 
 	public Perceptron(PerceptronSettings p_settings){
 		this.p_settings = p_settings;
+		p_settings.printNetInitializationSettings();
+		trainingSet = new TrainingSet(p_settings.getTrainingFile(), "");
 	}
 	public void train() {
 		BufferedReader reader = null;

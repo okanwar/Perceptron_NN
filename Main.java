@@ -24,7 +24,8 @@ public class Main{
 				perceptronSettings.setSettings();
 				
 				//Create net
-				printNetInitializationSettings(perceptronSettings.getSettings());
+				// printNetInitializationSettings(perceptronSettings.getSettings());
+				trainPerceptronFromSettings(perceptronSettings);
 			} else {
 				//Load from file
 			}
@@ -54,10 +55,11 @@ public class Main{
 						}
 						//Initialize perceptron with parsed settings
 						perceptronSettings = new PerceptronSettings(userSettings);
-						printNetInitializationSettings(perceptronSettings.getSettings());
+						// printNetInitializationSettings(perceptronSettings.getSettings());
 
-						Perceptron p1 = new Perceptron(perceptronSettings);	
-						p1.train();
+						// Perceptron p1 = new Perceptron(perceptronSettings);	
+						// p1.train();
+						trainPerceptronFromSettings(perceptronSettings);
 					} else {
 						//Load net from file
 					}
@@ -66,6 +68,11 @@ public class Main{
 
 			}
 		}
+	}
+
+	private static void trainPerceptronFromSettings(PerceptronSettings pSettings){
+		// printNetInitializationSettings(pSettings);
+		Perceptron p1 = new Perceptron(pSettings);
 	}
 
 	private static void printNetInitializationSettings(String [] userSettings){
