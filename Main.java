@@ -52,6 +52,13 @@ public class Main{
 							userSettings[index] = st.nextToken();
 							index++;	
 						}
+						
+						if(userSettings[1].equals("1")){
+							userSettings[1] = "true";
+						} else {
+							userSettings[1] = "false";
+						}
+
 						//Initialize perceptron with parsed settings
 						trainPerceptronFromSettings(new PerceptronSettings(userSettings));
 					} else {
@@ -65,8 +72,8 @@ public class Main{
 	}
 
 	private static void trainPerceptronFromSettings(PerceptronSettings pSettings){
-		// printNetInitializationSettings(pSettings);
-		Perceptron p1 = new Perceptron(pSettings);
+		Perceptron p1 = new Perceptron(pSettings ,true);
+		p1.trainNet();
 	}
 
 	private static void printNetInitializationSettings(String [] userSettings){

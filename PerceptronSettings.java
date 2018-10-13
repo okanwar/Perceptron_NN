@@ -4,8 +4,8 @@ import java.lang.*;
 public class PerceptronSettings{
 	private static final String TRAINING_PROMPT = "Enter the training data file name:";
 	private static final String INITIALIZED_WEIGHTS_PROMPT = "--- Initialized weight values ---\n" +
-		"(1) Initialize weights to 0\n" +
-		"(2) Initialize weights to random values between (-0.5,0.5)\n:";
+		"(0) Initialize weights to 0\n" +
+		"(1) Initialize weights to random values between (-0.5,0.5)\n:";
 	private static final String MAX_EPOCHS_PROMPT = "Enter the maximum number of training epochs:";
 	private static final String WEIGHT_FILE_PROMPT = "Enter a file name to save the trained weight settings:";
 	private static final String LEARNING_RATE_PROMPT = "Enter the learning rate alpha between 0 and 1, not including 0:";
@@ -28,6 +28,7 @@ public class PerceptronSettings{
 
 	public PerceptronSettings( String trainingFile, String weightsFile, boolean randomWeightValues,
 			int maxEpochs, double learningRate, double thresholdTheta, double thresholdWeightChanges, String depolymentFile){
+		System.out.println("RANDOM WEIGHTS:" + randomWeightValues);
 		this.trainingFile = trainingFile;
 		this.weightsFile = weightsFile;
 		this.randomWeightValues = randomWeightValues;

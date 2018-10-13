@@ -14,16 +14,16 @@ public class Pattern{
 
 	public void getStrings(String input_string, String output_string, String classification) {
 
-		StringTokenizer st = new StringTokenizer(input_string, " ");
+		StringTokenizer st = new StringTokenizer(input_string, " \t\n");
 		int n = 0;
 		while(st.hasMoreTokens()) {
-			input_array[n] = Integer.parseInt(st.nextToken());
+			input_array[n] = Integer.parseInt(st.nextToken().trim());
 			n++;
 		}
 		st = new StringTokenizer(output_string, " ");
 		int m = 0;
 		while(st.hasMoreTokens()) {
-			output_array[m] = Integer.parseInt(st.nextToken());
+			output_array[m] = Integer.parseInt(st.nextToken().trim());
 			m++;
 		}
 		classification_string = classification;
