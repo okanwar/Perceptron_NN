@@ -21,7 +21,7 @@ public class Main{
 
 			if(mode == 1){
 				//New net from scratch
-				perceptronSettings.setSettings();
+				perceptronSettings.setSettings(false);
 				
 				//Create net
 				trainPerceptronFromSettings(perceptronSettings);
@@ -44,7 +44,7 @@ public class Main{
 					//Determine mode
 					if( line.charAt(0) == '1' ){
 						//Extract net settings from file
-						String [] userSettings = new String[7];
+						String [] userSettings = new String[8];
 						StringTokenizer st = new StringTokenizer(line, " ");
 						st.nextToken(); 	//Skip first token, it is just the mode
 						int index = 0;

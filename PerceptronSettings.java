@@ -11,32 +11,34 @@ public class PerceptronSettings{
 	private static final String LEARNING_RATE_PROMPT = "Enter the learning rate alpha between 0 and 1, not including 0:";
 	private static final String THRESHOLD_THETA_PROMPT = "Enter the threshold theta:";
 	private static final String THRESHOLD_WEIGHT_CHANGE_PROMPT = "Enter the threshold for measuring weight changes:";
-	private String trainingFile, weightsFile;
+	private String trainingFile, weightsFile, deploymentFile;
 	private boolean randomWeightValues;
 	private int maxEpochs;
 	private double learningRate, thresholdTheta, thresholdWeightChanges;
 
 
 	public PerceptronSettings(){
-		this("", "", false, -1, -1, -1, -1);		
+		this(null, null, false, -1, -1, -1, -1, null);		
 	}
 
 	public PerceptronSettings(String [] settings){
-		this(settings[0], settings[3], Boolean.valueOf(settings[1]), Integer.parseInt(settings[2]), Double.parseDouble(settings[4]), Double.parseDouble(settings[5]), Double.parseDouble(settings[6]));
+		this(settings[0], settings[3], Boolean.valueOf(settings[1]), Integer.parseInt(settings[2]),
+			 Double.parseDouble(settings[4]), Double.parseDouble(settings[5]), Double.parseDouble(settings[6]), settings[7]);
 	}	
 
 	public PerceptronSettings( String trainingFile, String weightsFile, boolean randomWeightValues,
-			int maxEpochs, double learningRate, double thresholdTheta, double thresholdWeightChanges){
+			int maxEpochs, double learningRate, double thresholdTheta, double thresholdWeightChanges, String depolymentFile){
 		this.trainingFile = trainingFile;
 		this.weightsFile = weightsFile;
 		this.randomWeightValues = randomWeightValues;
 		this.maxEpochs = maxEpochs;
 		this.learningRate = learningRate;
 		this.thresholdTheta = thresholdTheta;
-		this.thresholdWeightChanges = thresholdWeightChanges;		
+		this.thresholdWeightChanges = thresholdWeightChanges;	
+		this.deploymentFile = deploymentFile;
 	}
 
-	public void setSettings(){
+	public void setSettings(boolean fromFile){
 
 		Scanner input = new Scanner(System.in);
 
