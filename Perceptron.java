@@ -28,108 +28,51 @@ public class Perceptron {
 		Pattern[] patternSet = trainingSet.getPatternSet();
 		double[][] weights = trainingSet.getWeights();
 		int[] calculatedOutput = new int[trainingSet.getOutputPatternSize()];
-		BufferedWriter writer = null;
-		String fileOutput = "";
 
-		// Create file if verbose train
-		if (verboseTrain) {
-			try {
-				writer = new BufferedWriter(new FileWriter(
-						p_settings.getTrainingFile() + "_" + p_settings.getMaxEpochs() + "_epoch_training.txt"));
-
-			} catch (Exception e) {
-				System.out.println("Failed to create training output file");
-			}
-		}
 
 		// Run training algorithm
 		int currentEpoch = 0;
 		boolean converged = false;
 		boolean weightsChanged = false;
+		
 		while (currentEpoch < p_settings.getMaxEpochs() && !converged) {
-			if (verboseTrain) {
-				fileOutput += " -- Epoch " + currentEpoch + "\n";
-			}
 
 			// Compute and classify a single pattern
 			for (int patternIndex = 0; patternIndex < trainingSet.getNumberOfPatterns(); patternIndex++) {
 
 				// Compute activation for single unit
 				for (int j = 0; j < trainingSet.getOutputPatternSize(); j++) {
-					double yin = computeYin(patternSet[patternIndex], j);
-
-					// Get Status for verbose train
-					if (verboseTrain) {
-						fileOutput += DIVIDER + "\n\n" + DIVIDER + "\t--- Pattern " + patternIndex + " Output Pattern "
-								+ j + " Epoch " + currentEpoch + "---\n" + DIVIDER + "\tYin = " + yin + "\n"
-								+ "\tThreshold theta = " + p_settings.getThresholdTheta() + "\n";
-					}
-
-					// Calculate activation for neuron
-					int output = -1;
-					if (yin > p_settings.getThresholdTheta()) {
-						output = 1;
-					} else if (yin < p_settings.getThresholdTheta()) {
-						output = -1;
-					} else {
-						output = 0;
-					}
+					
+					int output = computeActivation(computeYin(patternSet[patternIndex], j));
 					calculatedOutput[j] = output;
-
-					// Get changes for verbose train
-					if (verboseTrain) {
-						fileOutput += "\n\tOutput = " + output + " Target = " + patternSet[j].outputAt(j) + "\n";
-					}
 
 					// Update weights
 					double[] neuronWeights = trainingSet.getWeightsForOutput(j);
 
 					// Check if weights need updating
-					int target = patternSet[patternIndex].outputAt(j);
 					if (output != patternSet[patternIndex].outputAt(j)) {
 						weightsChanged = true;
 						// Update bias for single output neuron
 						double oldBiasWeight = trainingSet.getBiasWeight(j);
-						double newBiasWeight = oldBiasWeight
-								+ (p_settings.getLearningRate() * patternSet[patternIndex].outputAt(j));
+						double learningRate = p_settings.getLearningRate();
+						int patternOutput = patternSet[patternIndex].outputAt(j);
+						double newBiasWeight = oldBiasWeight + (learningRate * patternOutput);
 						trainingSet.updateBiasWeight(j, newBiasWeight);
-
-						// Get changes for verbose train
-						if (verboseTrain) {
-							fileOutput += "\n\t--- Updating Weights --- \n" + DIVIDER + "\tBias Weight "
-									+ String.format("Old bias:%10f New Bias:%10f\n", oldBiasWeight, newBiasWeight)
-									+ String.format("\t[%8s]%10s%10s", "Index", " Old Weight ", " New Weight ") + "\n";
-						}
 
 						// Update weight after computation of single output neuron
 						double newWeight = -1;
 						for (int sampleIndex = 0; sampleIndex < trainingSet.getInputPatternSize(); sampleIndex++) {
 							// Find new weights for each sample to single output neuron
 							double oldWeight = neuronWeights[sampleIndex];
-							newWeight = oldWeight + (p_settings.getLearningRate() * patternSet[patternIndex].outputAt(j)
-									* patternSet[patternIndex].inputAt(sampleIndex));
+							int patternInput = patternSet[patternIndex].inputAt(sampleIndex);
+//							int patternOutput = patternSet[patternIndex].outputAt(j);
+							newWeight = oldWeight + (p_settings.getLearningRate() * patternOutput * patternInput);
 							trainingSet.updateInputWeightForIndex(j, sampleIndex, newWeight);
-
-							// Print
-							if (verboseTrain) {
-								fileOutput += "\t[" + String.format("%8d", sampleIndex) + "]" + " "
-										+ String.format("%9f%10f", oldWeight, newWeight) + "\n";
-							}
 						}
-
-					} else {
-//						System.out.println("Did not updated weights with output:" + output + " and target:" + patternSet[j].outputAt(j) + " for a pattern " + patternIndex + " and output " + j);
-					}
-				}
-//				System.out.println();
-				if (verboseTrain) {
-					fileOutput += DIVIDER + "\n\n";
+					} 
 				}
 			}
 			currentEpoch++;
-			if (verboseTrain) {
-				fileOutput += DIVIDER + "\n";
-			}
 			if (!weightsChanged) {
 				converged = true;
 			} else {
@@ -141,16 +84,6 @@ public class Perceptron {
 			System.out.println("Reached max epochs and failed to converge");
 		} else {
 			System.out.println("Converged after " + currentEpoch + " epochs");
-		}
-
-		// Close file for verbose train
-		if (verboseTrain) {
-			try {
-				writer.write(fileOutput);
-				writer.close();
-			} catch (Exception e) {
-				System.out.println("Error closing writer");
-			}
 		}
 	}
 
