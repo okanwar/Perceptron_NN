@@ -2,7 +2,8 @@ import java.io.*;
 import java.util.*;
 import java.lang.*;
 
-public class Perceptron{
+public class Perceptron{\
+	private static final String DIVIDER = "----------------------------------------------------------\n";
 	private PerceptronSettings p_settings;
 	private TrainingSet trainingSet;
 	private boolean verboseTrain;
@@ -27,7 +28,9 @@ public class Perceptron{
 		double[][] weights = trainingSet.getWeights();
 		int[] calculatedOutput = new int[trainingSet.getOutputPatternSize()];
 		BufferedWriter writer = null;
+		String fileOutput = "";
 
+		//Create file if verbose train
 		if(verboseTrain){
 			try {
 				writer = new BufferedWriter(new FileWriter(p_settings.getTrainingFile()+"_"+ p_settings.getMaxEpochs()+"_epoch_training.txt"));
@@ -40,14 +43,8 @@ public class Perceptron{
 		//Run training algorithm
 		int currentEpoch = 0;
 		boolean converged = false;
-		while(currentEpoch < p_settings.getMaxEpochs() || !converged){
-			if(verboseTrain) {
-				try{
-					writer.write("--- Training ---\n\n -- Epoch " + currentEpoch );
-				} catch (Exception e){
-					System.out.println("Error writing verbose output");
-				}
-			}
+		while(currentEpoch < p_settings.getMaxEpochs() && !converged){
+			if(verboseTrain) {fileOutput += "--- Training ---\n\n -- Epoch " + currentEpoch + "\n";}
 
 			//Compute and classify a single pattern
 			for(int patternIndex= 0; patternIndex < trainingSet.getNumberOfPatterns(); patternIndex++ ) {
@@ -55,19 +52,15 @@ public class Perceptron{
 				//Compute activation for single unit
 				for(int j = 0; j < trainingSet.getOutputPatternSize(); j++){
 					double yin = computeYin(patternSet[patternIndex], j);
-					//Print Status
+					
+					//Get Status for verbose train
 					if(verboseTrain){
-						try {
-							writer.newLine();
-							writer.write("\t -- Pattern " + patternIndex + " Output Pattern " + j + "\n" +
-									"\tYin = " + yin + "\n" +
-									"\tThreshold theta = " + p_settings.getThresholdTheta() + "\n"
-								    );
-						} catch (Exception e){
-							System.out.println("Error writing yin verbose training data");
-						}
+						fileOutput += "\t -- Pattern " + patternIndex + " Output Pattern " + j + "---\n" +
+							"\tYin = " + yin + "\n" +
+							"\tThreshold theta = " + p_settings.getThresholdTheta() + "\n";
 					}	
 
+					//Calculate activation for neuron
 					int output = -1;
 					if(yin > p_settings.getThresholdTheta()){
 						output = 1;	
@@ -76,7 +69,10 @@ public class Perceptron{
 					} else {
 						output = 0;
 					}
+					calculatedOutput[j] = output;
 
+
+					//Get changes for verbose train
 					if(verboseTrain){
 						String operation = "";
 						if(output == 1 ){
@@ -86,57 +82,35 @@ public class Perceptron{
 						} else{
 							operation = "in range of +-";
 						}
-						try{
-							writer.write(output + " " + operation + " " + p_settings.getThresholdTheta());
-							writer.newLine();
-						} catch(Exception e){
-							System.out.println("Error writing output verbose train data");
-						}
+						fileOutput += "\n" + output + " " + operation + " " + p_settings.getThresholdTheta() + "\n";
 					}
 
-
-					calculatedOutput[j] = output;
 
 					//Update weights
 					double[] neuronWeights = trainingSet.getWeightsForOutput(j);
 
-
+					//Check if weights need updating
 					if(output != patternSet[j].outputAt(j)){
 						//Update bias for single output neuron
 						double oldBiasWeight = trainingSet.getBiasWeight(j);
 						double newBiasWeight = oldBiasWeight + (p_settings.getLearningRate() * patternSet[patternIndex].outputAt(j));
 						trainingSet.updateBiasWeight(j, newBiasWeight); 
-						if(verboseTrain){
-							try{
-								writer.write("\t--- Updating Weights --- \n\tBias Weight " + String.format("Old bias:%10f New Bias:%10f", oldBiasWeight, newBiasWeight));
-								writer.write("\n\t[Index]   Old Weight New Weight\n------------------------------\n");
-							} catch(Exception e){
-								System.out.println("Error writing verbose train data.");
-							}
-						}
+
+						//Get changes for verbose train
+						if(verboseTrain){ fileOutput += "\n\t--- Updating Weights --- \n" + DIVIDER + "\tBias Weight " + String.format("Old bias:%10f New Bias:%10f", oldBiasWeight, newBiasWeight) +"\n";}
 
 						//Update weight after computation of single output neuron
 						double newWeight = -1;
 						for(int sampleIndex = 0; sampleIndex < trainingSet.getInputPatternSize(); sampleIndex++){
+							//Find new weights for each sample to single output neuron
 							double oldWeight = neuronWeights[sampleIndex];
 							newWeight = oldWeight + (p_settings.getLearningRate() * patternSet[patternIndex].outputAt(j) * patternSet[patternIndex].inputAt(sampleIndex));
 							trainingSet.updateInputWeightForIndex(j, sampleIndex, newWeight);
-							if(verboseTrain){
-								try{
-									writer.write("\t[" + String.format("%8d",sampleIndex) + "]" + " " + String.format("%9f%10f", oldWeight,newWeight));
-									writer.newLine();
-								} catch (Exception e){
-									System.out.println("Error writing update bias verbose train data");
-								}
-							}
+
+							//Print
+							if(verboseTrain){ fileOutput += "\t[" + String.format("%8d",sampleIndex) + "]" + " " + String.format("%9f%10f", oldWeight,newWeight) + "\n";}
 						}	
-						if(verboseTrain){
-							try{
-								writer.write("-----------------------------\n\n");
-							} catch(Exception e){
-								System.out.println("Error writing verbose train");
-							}
-						}
+						if(verboseTrain){ fileOutput +=  DIVIDER + "\n"; }
 
 					} else {
 						System.out.println("Converged at epoch " + currentEpoch);
@@ -144,17 +118,15 @@ public class Perceptron{
 					}
 				}
 			}
-			if(verboseTrain){
-				try{
-					writer.write("-----------------------------\n\n");
-				} catch(Exception e){
-					System.out.println("Error writing verbose train");
-				}
-			}
 			currentEpoch++;
+
+			if(verboseTrain){ fileOutput +=  DIVIDER + "\n";}
 		}
+
+		//Close file for verbose train
 		if(verboseTrain){
 			try{
+				writer.write(fileOutput);
 				writer.close() ;
 			} catch(Exception e){
 				System.out.println("Error closing writer");
