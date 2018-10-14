@@ -44,7 +44,7 @@ public class Perceptron{
 		int currentEpoch = 0;
 		boolean converged = false;
 		while(currentEpoch < p_settings.getMaxEpochs() && !converged){
-			if(verboseTrain) {fileOutput += "--- Training ---\n\n -- Epoch " + currentEpoch + "\n";}
+			if(verboseTrain) {fileOutput += " -- Epoch " + currentEpoch + "\n";}
 
 			//Compute and classify a single pattern
 			for(int patternIndex= 0; patternIndex < trainingSet.getNumberOfPatterns(); patternIndex++ ) {

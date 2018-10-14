@@ -98,9 +98,9 @@ public class TrainingSet extends PatternSet{
 			int firstThreeLines = 0;
 
 			//Read first three lines
-			inputPatternSize = Integer.parseInt(reader.readLine());
-			outputPatternSize = Integer.parseInt(reader.readLine());
-			numberOfTrainingPatterns = Integer.parseInt(reader.readLine());
+			inputPatternSize = Integer.parseInt(reader.readLine().trim());
+			outputPatternSize = Integer.parseInt(reader.readLine().trim());
+			numberOfTrainingPatterns = Integer.parseInt(reader.readLine().trim());
 
 			//Setup training set
 			weights = new double[outputPatternSize][inputPatternSize];	
