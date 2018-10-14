@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 import java.lang.*;
 
-public class Perceptron{\
+public class Perceptron{
 	private static final String DIVIDER = "----------------------------------------------------------\n";
 	private PerceptronSettings p_settings;
 	private TrainingSet trainingSet;
@@ -52,10 +52,10 @@ public class Perceptron{\
 				//Compute activation for single unit
 				for(int j = 0; j < trainingSet.getOutputPatternSize(); j++){
 					double yin = computeYin(patternSet[patternIndex], j);
-					
+
 					//Get Status for verbose train
 					if(verboseTrain){
-						fileOutput += "\t -- Pattern " + patternIndex + " Output Pattern " + j + "---\n" +
+						fileOutput += DIVIDER + "\n\n" + DIVIDER + "\t--- Pattern " + patternIndex + " Output Pattern " + j + "---\n" + DIVIDER +
 							"\tYin = " + yin + "\n" +
 							"\tThreshold theta = " + p_settings.getThresholdTheta() + "\n";
 					}	
@@ -74,15 +74,7 @@ public class Perceptron{\
 
 					//Get changes for verbose train
 					if(verboseTrain){
-						String operation = "";
-						if(output == 1 ){
-							operation = ">";
-						} else if(output == -1){
-							operation = "<";
-						} else{
-							operation = "in range of +-";
-						}
-						fileOutput += "\n" + output + " " + operation + " " + p_settings.getThresholdTheta() + "\n";
+						fileOutput += "\n\tOutput = " + output + "\n";
 					}
 
 
@@ -97,7 +89,9 @@ public class Perceptron{\
 						trainingSet.updateBiasWeight(j, newBiasWeight); 
 
 						//Get changes for verbose train
-						if(verboseTrain){ fileOutput += "\n\t--- Updating Weights --- \n" + DIVIDER + "\tBias Weight " + String.format("Old bias:%10f New Bias:%10f", oldBiasWeight, newBiasWeight) +"\n";}
+						if(verboseTrain){ fileOutput += "\n\t--- Updating Weights --- \n" + DIVIDER + "\tBias Weight " + 
+							String.format("Old bias:%10f New Bias:%10f\n", oldBiasWeight, newBiasWeight) + 
+								String.format("\t[%8s]%10s%10s", "Index"," Old Weight ", " New Weight " ) + "\n";}
 
 						//Update weight after computation of single output neuron
 						double newWeight = -1;
@@ -110,13 +104,13 @@ public class Perceptron{\
 							//Print
 							if(verboseTrain){ fileOutput += "\t[" + String.format("%8d",sampleIndex) + "]" + " " + String.format("%9f%10f", oldWeight,newWeight) + "\n";}
 						}	
-						if(verboseTrain){ fileOutput +=  DIVIDER + "\n"; }
 
 					} else {
-						System.out.println("Converged at epoch " + currentEpoch);
+						System.out.println("Converged at epoch " + currentEpoch + " with output:" + output + " and target:" + patternSet[j].outputAt(j));
 						converged = true;
 					}
 				}
+				if(verboseTrain){ fileOutput +=  DIVIDER + "\n\n"; }
 			}
 			currentEpoch++;
 
