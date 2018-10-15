@@ -3,11 +3,11 @@ import java.util.*;
 import java.lang.*;
 
 public class Perceptron {
-	private static final String DIVIDER = "----------------------------------------------------------\n";
 	private PerceptronSettings p_settings;
 	private TrainingSet trainingSet;
-	private TrainingSet deploymentSet;
+	private DeploymentSet deploymentSet;
 	private boolean verboseTrain;
+	private String verboseTrainFileOutput;
 
 	public Perceptron(PerceptronSettings p_settings, boolean verboseTrain) {
 		this.p_settings = p_settings;
@@ -16,67 +16,59 @@ public class Perceptron {
 
 		// Set training file
 		if (p_settings.hasTrainingFile()) {
-			System.out.println("CREATING WITH RANDOM WEIGHTS:" + p_settings.initializeWithRandomWeights());
 			trainingSet = new TrainingSet(p_settings.getTrainingFile(), p_settings.initializeWithRandomWeights());
 		} else {
 			trainingSet = null;
 		}
+		
+		deploymentSet = null;
 	}
 
 	public void trainNet() {
 		// Setup
 		Pattern[] patternSet = trainingSet.getPatternSet();
-		double[][] weights = trainingSet.getWeights();
-		int[] calculatedOutput = new int[trainingSet.getOutputPatternSize()];
-
-
-		// Run training algorithm
 		int currentEpoch = 0;
 		boolean converged = false;
 		boolean weightsChanged = false;
+		boolean weightChangeThresholdHit = false;
+		Pattern currentTrainingPattern = null;
 		
-		while (currentEpoch < p_settings.getMaxEpochs() && !converged) {
-
-			// Compute and classify a single pattern
+		// Run training algorithm
+		while (currentEpoch < p_settings.getMaxEpochs() && !converged && !weightChangeThresholdHit) {
+			
+			// Compute and train a single pattern
 			for (int patternIndex = 0; patternIndex < trainingSet.getNumberOfPatterns(); patternIndex++) {
-
-				// Compute activation for single unit
-				for (int j = 0; j < trainingSet.getOutputPatternSize(); j++) {
+				currentTrainingPattern = patternSet[patternIndex];
+				if(verboseTrain) trainingSet.sendIncrementStatus(currentEpoch, patternIndex);
+				
+				// Compute activation for single output neuron
+				for (int outputNeuron = 0; outputNeuron < trainingSet.getOutputPatternSize(); outputNeuron++) {
 					
-					int output = computeActivation(computeYin(patternSet[patternIndex], j));
-					calculatedOutput[j] = output;
-
-					// Update weights
-					double[] neuronWeights = trainingSet.getWeightsForOutput(j);
+					int output = computeActivation(computeYin(currentTrainingPattern, outputNeuron));
 
 					// Check if weights need updating
-					if (output != patternSet[patternIndex].outputAt(j)) {
+					if (output != currentTrainingPattern.outputAt(outputNeuron)) {
+						if(verboseTrain) trainingSet.sendBeginStatus(outputNeuron);		//Log changes
 						weightsChanged = true;
-						// Update bias for single output neuron
-						double oldBiasWeight = trainingSet.getBiasWeight(j);
-						double learningRate = p_settings.getLearningRate();
-						int patternOutput = patternSet[patternIndex].outputAt(j);
-						double newBiasWeight = oldBiasWeight + (learningRate * patternOutput);
-						trainingSet.updateBiasWeight(j, newBiasWeight);
-
-						// Update weight after computation of single output neuron
-						double newWeight = -1;
-						for (int sampleIndex = 0; sampleIndex < trainingSet.getInputPatternSize(); sampleIndex++) {
-							// Find new weights for each sample to single output neuron
-							double oldWeight = neuronWeights[sampleIndex];
-							int patternInput = patternSet[patternIndex].inputAt(sampleIndex);
-//							int patternOutput = patternSet[patternIndex].outputAt(j);
-							newWeight = oldWeight + (p_settings.getLearningRate() * patternOutput * patternInput);
-							trainingSet.updateInputWeightForIndex(j, sampleIndex, newWeight);
+						trainingSet.updateBiasWeight(outputNeuron, calculateNewBiasWeight(currentTrainingPattern, outputNeuron));				//Update bias
+						for (int inputNeuron = 0; inputNeuron < trainingSet.getInputPatternSize(); inputNeuron++) {
+							trainingSet.updateInputWeightForIndex(outputNeuron, inputNeuron, calculateNewWeight(currentTrainingPattern, inputNeuron, outputNeuron));		//Update input weights
 						}
+						if(verboseTrain) trainingSet.sendEndStatus();
 					} 
 				}
 			}
+			
+			//End of epoch
 			currentEpoch++;
-			if (!weightsChanged) {
+			
+			//Check if should run another epoch
+			if (!weightsChanged || trainingSet.getMaxWeightChange() < p_settings.getWeightChangesThreshold()) {
 				converged = true;
+				weightChangeThresholdHit = true;
 			} else {
 				weightsChanged = false;
+				trainingSet.resetMaxWeightChange();
 			}
 		}
 
@@ -85,9 +77,15 @@ public class Perceptron {
 		} else {
 			System.out.println("Converged after " + currentEpoch + " epochs");
 		}
+		
+		if(verboseTrain) trainingSet.finalizeResults(p_settings.getTrainingFile());
 	}
 
 	public void deployNet() {
+		if(deploymentSet == null) {
+			if(!p_settings.hasDeploymentFile()) p_settings.setDeploymentFile();
+			deploymentSet = new DeploymentSet(p_settings.getDeploymentFile());
+		}
 		Pattern [] patternSet = deploymentSet.getPatternSet();
 		int [] classification = new int[deploymentSet.getOutputPatternSize()];
 		
@@ -108,6 +106,22 @@ public class Perceptron {
 			System.out.println("]");
 		}
 	}
+	
+	private double calculateNewWeight(Pattern p, int sampleNeuron, int outputNeuron) {
+		double oldWeight = trainingSet.getWeightsForOutputAt(outputNeuron, sampleNeuron);
+		int patternInput = p.inputAt(sampleNeuron);
+		int patternOutput = p.outputAt(outputNeuron);
+		double newWeight = oldWeight + (p_settings.getLearningRate() * patternOutput * patternInput);
+		return newWeight;
+	}
+	
+	private double calculateNewBiasWeight(Pattern p, int outputNeuron) {
+		double oldBiasWeight = trainingSet.getBiasWeight(outputNeuron);
+		double learningRate = p_settings.getLearningRate();
+		int patternOutput = p.outputAt(outputNeuron);
+		double newBiasWeight = oldBiasWeight + (learningRate * patternOutput);
+		return newBiasWeight;
+	}
 
 	private int computeActivation(double yin) {
 		int output = -1;
@@ -118,6 +132,9 @@ public class Perceptron {
 		} else {
 			output = 0;
 		}
+		
+		if(verboseTrain) trainingSet.sendActivationStatus(yin, output);
+		
 		return output;
 	}
 	

@@ -2,18 +2,24 @@ import java.io.*;
 import java.util.Random;
 
 public class TrainingSet extends PatternSet{
-
+	private static final String DIVIDER = "--------------------------------------------------------------------------------------------------------------------\n";
 	private double[][] weights;
 	private double [] biasWeights;
-	private int inputPatternSize, outputPatternSize, numberOfTrainingPatterns;
+	private double maxWeightChange;
+	private String weightChanges;
 
 	public TrainingSet(String trainingFile, boolean randomWeights){
+		//Setup pattern set
 		super(trainingFile);
-		inputPatternSize = outputPatternSize = numberOfTrainingPatterns = -1;
-		weights = null;
-		biasWeights = null;
-		loadTrainingSet();
+		
+		//Training Set
+//		inputPatternSize = outputPatternSize = numberOfTrainingPatterns = -1;
+		maxWeightChange = 0;
+		weights = new double[outputPatternSize][inputPatternSize];	
+		biasWeights = new double[outputPatternSize];
+//		loadTrainingSet();
 		initializeWeights(randomWeights);
+		weightChanges = DIVIDER + "Training Results\n" + DIVIDER ;
 		printTrainingSet();
 	}
 
@@ -23,6 +29,10 @@ public class TrainingSet extends PatternSet{
 
 	public double[] getWeightsForOutput(int output){
 		return weights[output];
+	}
+	
+	public double getWeightsForOutputAt(int output, int input) {
+		return weights[output][input];
 	}
 
 	public double[] getBiasWeights(){
@@ -34,23 +44,27 @@ public class TrainingSet extends PatternSet{
 	}
 
 	public void updateBiasWeight(int outputNeuron, double newBias){
+		double oldBiasWeight = biasWeights[outputNeuron];
+		double weightChange = Math.abs(newBias - oldBiasWeight);
+		if( weightChange > maxWeightChange ) maxWeightChange = weightChange;
 		biasWeights[outputNeuron] = newBias;
+		weightChanges += String.format("%15s%15f%15f%15f ", "Bias", oldBiasWeight, biasWeights[outputNeuron], weightChange) + " | bnew = bold + lr*t\n";
 	}
 
-	public void updateInputWeightForIndex(int outputNeuron, int sampleIndex, double newWeight){
-		weights[outputNeuron][sampleIndex] = newWeight;
+	public void updateInputWeightForIndex(int outputNeuron, int inputNeuron, double newWeight){
+		double oldWeight = weights[outputNeuron][inputNeuron];
+		double weightChange = Math.abs(newWeight - oldWeight);
+		if( weightChange > maxWeightChange ) maxWeightChange = weightChange;
+		weights[outputNeuron][inputNeuron] = newWeight;
+		weightChanges += String.format("%15s%15f%15f%15f ", "Input", oldWeight, newWeight, weightChange) + " | Wnew = Wold + lr*t*x\n";
 	}
-
-	public int getOutputPatternSize(){
-		return outputPatternSize;
+	
+	public double getMaxWeightChange() {
+		return maxWeightChange;
 	}
-
-	public int getInputPatternSize(){
-		return inputPatternSize;
-	}
-
-	public int getNumberOfPatterns(){
-		return numberOfTrainingPatterns;
+	
+	public void resetMaxWeightChange() {
+		maxWeightChange = 0;
 	}
 
 	private void initializeWeights(boolean randomWeights){
@@ -87,71 +101,8 @@ public class TrainingSet extends PatternSet{
 		}
 	}
 
-
-	private void loadTrainingSet(){
-		BufferedReader reader = null;
-		String line = "";
-
-		//Parse training set
-		try {
-			reader = new BufferedReader (new FileReader (super.dataFile));
-			int firstThreeLines = 0;
-
-			//Read first three lines
-			inputPatternSize = Integer.parseInt(reader.readLine().trim());
-			outputPatternSize = Integer.parseInt(reader.readLine().trim());
-			numberOfTrainingPatterns = Integer.parseInt(reader.readLine().trim());
-
-			//Setup training set
-			weights = new double[outputPatternSize][inputPatternSize];	
-			biasWeights = new double[outputPatternSize];
-			super.patternSet = new Pattern[numberOfTrainingPatterns];
-
-			//Begin reading training pairs
-			int linesOfInputPattern = inputPatternSize / outputPatternSize; 
-			int sampleIndex = 0;
-			int trainingSetIndex = 0;
-			String inputPattern = "";
-			String outputPattern = "";
-			String classification = "";
-
-			//Read a single sample			
-			while ((line = reader.readLine()) != null){
-				if( !line.isEmpty() ){
-					if(sampleIndex < linesOfInputPattern){
-						//Reading input pattern
-						inputPattern += line + " ";
-					} else if(sampleIndex == linesOfInputPattern){
-						//Reading output pattern
-						outputPattern = line + " ";
-					} else {
-						//Reading classification
-						classification = line;
-
-						//Create new training pair
-						Pattern p1 = new Pattern(inputPatternSize, outputPatternSize);
-						p1.getStrings(inputPattern, outputPattern, classification);
-						super.patternSet[trainingSetIndex]  = p1;
-						trainingSetIndex++;
-
-						//Reset
-						sampleIndex = 0;
-						inputPattern = "";
-						outputPattern = "";
-
-						continue;
-					}
-					sampleIndex++;
-				}
-			}
-		} catch (Exception e) {
-			System.out.println("Error parsing file. " + e);
-		}
-	}
-
-
 	public void printTrainingSet(){
-		printTrainingPattern();
+		printSet();
 		printWeights();
 	}
 
@@ -166,15 +117,33 @@ public class TrainingSet extends PatternSet{
 			System.out.println("Wbias: " + biasWeights[o] + "\n");
 		}
 	}
-
-	public void printTrainingPattern(){
-		if(super.patternSet != null){
-			System.out.println("--- Training Set ---");
-			for(int i = 0; i < super.patternSet.length; i++){
-				super.patternSet[i].printPair();
-			}
-		}
+	
+	public void sendIncrementStatus(int epoch, int patternNumber ) {
+		weightChanges += "\n" + DIVIDER + "Epoch " + epoch + " Pattern " + patternNumber + "\n" + DIVIDER + "\n";
+	}
+	
+	public void sendActivationStatus(double yin, double activation) {
+		weightChanges += DIVIDER + "Activation\n" + DIVIDER + "Yin = " + yin + "\nActivation = " + activation + "\n";
+	}
+	
+	public void sendBeginStatus(int outputNeuron) {
+		weightChanges += DIVIDER + "Weight Changes for Output Neuron " + outputNeuron + "\n" + DIVIDER +
+				String.format("%15s%15s%15s%15s\n", "Type", "Wold", "Wnew", "Change");
+	}
+	
+	public void sendEndStatus() {
+		weightChanges += DIVIDER + "\n";
 	}
 
+	public void finalizeResults(String file) {
+		BufferedWriter writer = null;
+		try {
+			writer = new BufferedWriter(new FileWriter(file+"_training_output.txt"));
+			writer.write(weightChanges);
+			writer.close();
+		} catch(Exception e) {
+			System.out.println("Error writing verbose train results");
+		}
+	}
 
 }

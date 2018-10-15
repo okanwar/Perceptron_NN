@@ -24,7 +24,9 @@ public class Main{
 				perceptronSettings.setSettings(false);
 				
 				//Create net
-				trainPerceptronFromSettings(perceptronSettings);
+				Perceptron p1 = new Perceptron(perceptronSettings ,true);
+				p1.trainNet();
+				p1.deployNet();
 			} else {
 				//Load from file
 			}
@@ -60,7 +62,9 @@ public class Main{
 						}
 
 						//Initialize perceptron with parsed settings
-						trainPerceptronFromSettings(new PerceptronSettings(userSettings));
+						Perceptron p1 = new Perceptron(new PerceptronSettings(userSettings) ,true);
+						p1.trainNet();
+						p1.deployNet();
 					} else {
 						//Load net from file
 					}
@@ -71,10 +75,6 @@ public class Main{
 		}
 	}
 
-	private static void trainPerceptronFromSettings(PerceptronSettings pSettings){
-		Perceptron p1 = new Perceptron(pSettings ,true);
-		p1.trainNet();
-	}
 
 	private static void printNetInitializationSettings(String [] userSettings){
 		String [] variables = new String[]{
@@ -94,17 +94,5 @@ public class Main{
 		}
 		System.out.println("------------------------------------");
 	}
-
-	// private static String [] getNetSettings(String [] prompts){
-	// 	String [] netSettings = new String[prompts.length];
-	// 	Scanner input = new Scanner(System.in);
-
-	// 	for(int i = 0; i < prompts.length; i++){
-	// 		System.out.print(prompts[i]);
-	// 		netSettings[i] = input.next();
-	// 		System.out.println();
-	// 	}
-	// 	return netSettings;
-	// }
 
 }

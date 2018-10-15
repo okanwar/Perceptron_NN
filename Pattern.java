@@ -13,21 +13,9 @@ public class Pattern{
 	}
 
 	public void getStrings(String input_string, String output_string, String classification) {
-
-		StringTokenizer st = new StringTokenizer(input_string, " \t\n");
-		int n = 0;
-		while(st.hasMoreTokens()) {
-			input_array[n] = Integer.parseInt(st.nextToken().trim());
-			n++;
-		}
-		st = new StringTokenizer(output_string, " ");
-		int m = 0;
-		while(st.hasMoreTokens()) {
-			output_array[m] = Integer.parseInt(st.nextToken().trim());
-			m++;
-		}
+		tokenizeInput(input_string);
+		tokenizeOutput(output_string);
 		classification_string = classification;
-
 	}
 	
 	public int inputAt(int index){
@@ -37,7 +25,23 @@ public class Pattern{
 	public int outputAt(int index){
 		return output_array[index];
 	}
+	
+	public int getOutputSize() {
+		return output_array.length;
+	}
+	
+	public int getInputSize() {
+		return input_array.length;
+	}
 
+	public String getClassification() {
+		return classification_string;
+	}
+	
+	public void setClassification(String s) {
+		classification_string = s;
+	}
+	
 	public void printPair(){
 		for(int i = 0; i < input_array.length; i++){
 			System.out.print(input_array[i] + " ");
@@ -53,4 +57,21 @@ public class Pattern{
 		System.out.println("\n" + classification_string + "\n");
 	}
 
+	public void tokenizeInput(String input_string) {
+		StringTokenizer st = new StringTokenizer(input_string, " \t\n");
+		int n = 0;
+		while(st.hasMoreTokens()) {
+			input_array[n] = Integer.parseInt(st.nextToken().trim());
+			n++;
+		}
+	}
+	
+	public void tokenizeOutput(String output_string) {
+		StringTokenizer st = new StringTokenizer(output_string, " ");
+		int m = 0;
+		while(st.hasMoreTokens()) {
+			output_array[m] = Integer.parseInt(st.nextToken().trim());
+			m++;
+		}
+	}
 }
