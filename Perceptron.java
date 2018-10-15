@@ -90,7 +90,7 @@ public class Perceptron {
 		int [] classification = new int[deploymentSet.getOutputPatternSize()];
 		
 		//Classify each pattern in deployment set
-		for (int patternIndex = 0; patternIndex < deploymentSet.getInputPatternSize(); patternIndex++) {
+		for (int patternIndex = 0; patternIndex < deploymentSet.getNumberOfPatterns(); patternIndex++) {
 			
 			//Classify a single pattern
 			for (int output = 0; output < deploymentSet.getOutputPatternSize(); output++) {
