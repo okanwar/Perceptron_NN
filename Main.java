@@ -18,20 +18,22 @@ public class Main{
 			int mode = input.nextInt();
 
 			PerceptronSettings perceptronSettings = new PerceptronSettings();
+			Perceptron p1 = new Perceptron(perceptronSettings ,false);
 
 			if(mode == 1){
 				//New net from scratch
-				perceptronSettings.setSettings(false);
+				perceptronSettings.setSettings();
 				
 				//Create net
-				Perceptron p1 = new Perceptron(perceptronSettings ,true);
 				p1.trainNet();
+				perceptronSettings.setDeploymentFile(null);
 				p1.deployNet();
 			} else {
 				//Load from file
-				perceptronSettings.setWeightsFile();
-				Perceptron p1 = new Perceptron(perceptronSettings, false);
-				p1.setWeightsFromFile();
+				perceptronSettings.setWeightsFile(null);
+				perceptronSettings.setDeploymentFile(null);
+//				p1.setWeightsFromFile();
+				p1.deployNet();
 
 			}
 		} else {

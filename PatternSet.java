@@ -7,10 +7,12 @@ public class PatternSet{
 	protected String dataFile;
 	protected Pattern[] patternSet;
 	protected int inputPatternSize, outputPatternSize, numberOfTrainingPatterns;
+	protected boolean setInitialized;
 
 	public PatternSet(String file){
 		this.dataFile = file;
 		patternSet = null;
+		setInitialized = false;
 		if(file != null) loadSetFromFile();
 	}
 
@@ -93,6 +95,9 @@ public class PatternSet{
 					sampleIndex++;
 				}
 			}
+			setInitialized = true;
+		} catch (FileNotFoundException f) {
+			System.out.println("Could not create pattern set for file:" + dataFile);
 		} catch (Exception e) {
 			System.out.println("Error parsing file. " + e);
 		}

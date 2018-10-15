@@ -9,7 +9,7 @@ public class DeploymentSet extends PatternSet {
 		super(file);
 		correctlyClassified = 0;
 		incorrectlyClassified = 0;
-		printSet();
+//		printSet();
 	}
 
 	public boolean isClassifiedCorrectly(int [] calculatedOutput, int patternIndex){
