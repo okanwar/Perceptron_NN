@@ -110,6 +110,10 @@ public class Perceptron {
 		}
 		System.out.println("Correclty classified:" + deploymentSet.numCorrectlyClassifiedPatterns() + "\nCorrectly classified:" + deploymentSet.numIncorrecltyClassifiedPatterns());
 	}
+
+	public void setWeightsFromFile(){
+		trainingSet = new TrainingSet(p_settings.getWeightsFile());
+	}
 	
 	private double calculateNewWeight(Pattern p, int sampleNeuron, int outputNeuron) {
 		double oldWeight = trainingSet.getWeightsForOutputAt(outputNeuron, sampleNeuron);

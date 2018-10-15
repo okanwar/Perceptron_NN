@@ -29,6 +29,10 @@ public class Main{
 				p1.deployNet();
 			} else {
 				//Load from file
+				perceptronSettings.setWeightsFile();
+				Perceptron p1 = new Perceptron(perceptronSettings, false);
+				p1.setWeightsFromFile();
+
 			}
 		} else {
 			//Run with specifications from file

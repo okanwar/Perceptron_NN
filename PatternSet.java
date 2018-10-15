@@ -11,7 +11,7 @@ public class PatternSet{
 	public PatternSet(String file){
 		this.dataFile = file;
 		patternSet = null;
-		loadSetFromFile();
+		if(file != null) loadSetFromFile();
 	}
 
 	public Pattern[] getPatternSet(){	

@@ -93,6 +93,13 @@ public class PerceptronSettings{
 		System.out.println();
 	}
 
+	public void setWeightsFile(){
+		Scanner input = new Scanner(System.in);
+		System.out.print(WEIGHT_FILE_PROMPT);
+		weightsFile = input.next();
+		System.out.println();
+	}
+
 	public void printNetInitializationSettings(){
 
 		System.out.println("\nInitializing net with settings:");
