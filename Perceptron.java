@@ -104,7 +104,11 @@ public class Perceptron {
 				System.out.print(classification[i] + " ");
 			}
 			System.out.println("]");
+
+			//Verify classification of pattern
+			deploymentSet.isClassifiedCorrectly(classification, patternIndex);	
 		}
+		System.out.println("Correclty classified:" + deploymentSet.numCorrectlyClassifiedPatterns() + "\nCorrectly classified:" + deploymentSet.numIncorrecltyClassifiedPatterns());
 	}
 	
 	private double calculateNewWeight(Pattern p, int sampleNeuron, int outputNeuron) {
