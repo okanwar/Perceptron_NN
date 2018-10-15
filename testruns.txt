@@ -1,0 +1,2 @@
+1 trainingsmall.txt 1 50 test 0.2 20 0.00001 trainingsmall.txt
+
