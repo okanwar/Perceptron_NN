@@ -11,6 +11,7 @@ public class PerceptronSettings{
 	private static final String LEARNING_RATE_PROMPT = "Enter the learning rate alpha between 0 and 1, not including 0:";
 	private static final String THRESHOLD_THETA_PROMPT = "Enter the threshold theta:";
 	private static final String THRESHOLD_WEIGHT_CHANGE_PROMPT = "Enter the threshold for measuring weight changes:";
+	private static final String DEPLOYMENT_FILE_PROMPT = "Enter the testing/deployment file name:";
 	private String trainingFile, weightsFile, deploymentFile;
 	private boolean randomWeightValues;
 	private int maxEpochs;
@@ -27,8 +28,7 @@ public class PerceptronSettings{
 	}	
 
 	public PerceptronSettings( String trainingFile, String weightsFile, boolean randomWeightValues,
-			int maxEpochs, double learningRate, double thresholdTheta, double thresholdWeightChanges, String depolymentFile){
-		System.out.println("RANDOM WEIGHTS:" + randomWeightValues);
+			int maxEpochs, double learningRate, double thresholdTheta, double thresholdWeightChanges, String deploymentFile){
 		this.trainingFile = trainingFile;
 		this.weightsFile = weightsFile;
 		this.randomWeightValues = randomWeightValues;
@@ -85,10 +85,17 @@ public class PerceptronSettings{
 		System.out.println();
 
 	}
+	
+	public void setDeploymentFile() {
+		Scanner input = new Scanner(System.in);
+		System.out.print(DEPLOYMENT_FILE_PROMPT);
+		deploymentFile = input.next();
+		System.out.println();
+	}
 
 	public void printNetInitializationSettings(){
 
-		System.out.println("Initializing net with settings:");
+		System.out.println("\nInitializing net with settings:");
 		System.out.println("------------------------------------");
 		System.out.println("Training File: " + trainingFile + "\n" +
 			"Initialize weights to random values: " +  randomWeightValues + "\n" +
@@ -120,6 +127,18 @@ public class PerceptronSettings{
 	
 	public String getWeightsFile(){
 		return weightsFile;
+	}
+	
+	public String getDeploymentFile() {
+		return deploymentFile;
+	}
+	
+	public boolean hasDeploymentFile() {
+		if(deploymentFile != null) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public boolean initializeWithRandomWeights(){
