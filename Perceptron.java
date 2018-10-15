@@ -77,7 +77,7 @@ public class Perceptron {
 		} else {
 			System.out.println("Converged after " + currentEpoch + " epochs");
 		}
-		
+        trainingSet.weightsWriter(p_settings.getWeightsFile(), p_settings);		
 		if(verboseTrain) trainingSet.finalizeResults(p_settings.getTrainingFile());
 	}
 

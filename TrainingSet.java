@@ -150,11 +150,14 @@ public class TrainingSet extends PatternSet{
         try {
             writer = new BufferedWriter(new FileWriter("output_file.txt"));
             for (int i = 0; i < outputPatternSize; i++) {
-                    writer.write(biasWeights[i]);
+                    writer.write(Double.toString(biasWeights[i]) + " \n");
                 for(int j = 0; j < inputPatternSize; j++) {
-                    writer.write(weights[i][j] + " ");
+                    writer.write(Double.toString(weights[i][j]) + " ");
                 }
+                writer.newLine();
             }
-            writer.write(threshold_theta.getThresholdTheta());
-        }
+            writer.write(Double.toString(threshold_theta.getThresholdTheta()));
+            writer.close();
+        } catch (Exception e) {}
+    }
 }

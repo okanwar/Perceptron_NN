@@ -6,4 +6,4 @@ jc javac c compile:
 cr: compile 
 
 clean:
-	-rm *.class 
+	-rm *.class
