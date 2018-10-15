@@ -22,7 +22,8 @@ public class Main{
 
 			if(mode == 1){
 				//New net from scratch
-				perceptronSettings.setSettings();
+//				perceptronSettings.setSettings();
+				perceptronSettings.setUserSettings();
 				
 				//Create net
 				p1.trainNet();
@@ -30,7 +31,7 @@ public class Main{
 				p1.deployNet();
 			} else {
 				//Load from file
-				perceptronSettings.setWeightsFile(null);
+				perceptronSettings.setWeightsFile(null, true);
 				perceptronSettings.setDeploymentFile(null);
 //				p1.setWeightsFromFile();
 				p1.deployNet();
@@ -73,6 +74,14 @@ public class Main{
 						p1.deployNet();
 					} else {
 						//Load net from file
+						perceptronSettings = new PerceptronSettings();
+						Perceptron p1 = new Perceptron(perceptronSettings, false);
+						
+						StringTokenizer st = new StringTokenizer(line, " ");
+						st.nextToken(); 	//Skip first token
+						perceptronSettings.setWeightsFile(st.nextToken(), true);
+						perceptronSettings.setDeploymentFile(st.nextToken());
+						p1.deployNet();
 					}
 				}
 			} catch (Exception e){

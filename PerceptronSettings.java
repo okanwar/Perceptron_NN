@@ -14,9 +14,10 @@ public class PerceptronSettings {
 	private static final String THRESHOLD_WEIGHT_CHANGE_PROMPT = "Enter the threshold for measuring weight changes:";
 	private static final String DEPLOYMENT_FILE_PROMPT = "Enter the testing/deployment file name:";
 	private String trainingFile, weightsFile, deploymentFile;
-	private boolean randomWeightValues;
+	private boolean randomWeightValues, weightsFromFile;
 	private int maxEpochs;
 	private double learningRate, thresholdTheta, thresholdWeightChanges;
+	private Scanner input;
 
 	public PerceptronSettings() {
 		this(null, null, false, -1, -1, -1, -1, null);
@@ -38,90 +39,157 @@ public class PerceptronSettings {
 		this.thresholdTheta = thresholdTheta;
 		this.thresholdWeightChanges = thresholdWeightChanges;
 		this.deploymentFile = deploymentFile;
+		this.weightsFile = weightsFile;
+		this.input = null;
 	}
 
 	public void setSettings() {
 
-		Scanner input = new Scanner(System.in);
-
-		// Training file
-		System.out.print(TRAINING_PROMPT);
-		trainingFile = input.next();
-		System.out.println();
-
-		// Random weights
-		System.out.print(INITIALIZED_WEIGHTS_PROMPT);
-		if (input.nextInt() == 1) {
-			randomWeightValues = true;
-		} else {
-			randomWeightValues = false;
-		}
-		System.out.println();
-
-		// Max epochs
-		System.out.print(MAX_EPOCHS_PROMPT);
-		maxEpochs = input.nextInt();
-		System.out.println();
-
-		// Weight file
-		System.out.print(WEIGHT_FILE_PROMPT);
-		weightsFile = input.next();
-		System.out.println();
-
-		// learning rate
-		do {
-			System.out.print(LEARNING_RATE_PROMPT);
-			learningRate = input.nextDouble();
-			System.out.println();
-		} while (!validLearningRate());
-
-		// threshold theta
-		System.out.print(THRESHOLD_THETA_PROMPT);
-		thresholdTheta = input.nextDouble();
-		System.out.println();
-
-		// threshold weight changes
-		System.out.print(THRESHOLD_WEIGHT_CHANGE_PROMPT);
-		thresholdWeightChanges = input.nextDouble();
-		System.out.println();
+//		input = new Scanner(System.in);
+//
+//		// Training file
+//		System.out.print(TRAINING_PROMPT);
+//		trainingFile = input.next();
+//		System.out.println();
+//
+//		// Random weights
+//		System.out.print(INITIALIZED_WEIGHTS_PROMPT);
+//		if (input.nextInt() == 1) {
+//			randomWeightValues = true;
+//		} else {
+//			randomWeightValues = false;
+//		}
+//		System.out.println();
+//
+//		// Max epochs
+//		System.out.print(MAX_EPOCHS_PROMPT);
+//		maxEpochs = input.nextInt();
+//		System.out.println();
+//
+//		// Weight file
+//		System.out.print(WEIGHT_FILE_PROMPT);
+//		weightsFile = input.next();
+//		System.out.println();
+//
+//		// learning rate
+//		do {
+//			System.out.print(LEARNING_RATE_PROMPT);
+//			learningRate = input.nextDouble();
+//			System.out.println();
+//		} while (!validLearningRate());
+//
+//		// threshold theta
+//		System.out.print(THRESHOLD_THETA_PROMPT);
+//		thresholdTheta = input.nextDouble();
+//		System.out.println();
+//
+//		// threshold weight changes
+//		System.out.print(THRESHOLD_WEIGHT_CHANGE_PROMPT);
+//		thresholdWeightChanges = input.nextDouble();
+//		System.out.println();
 
 	}
 
 	public void setUserSettings() {
 		Scanner input = new Scanner(System.in);
-		int creation = Integer.parseInt(getValue(input, NET_CREATION_PROMPT));
-		if (creation == 1) {
-			// Get settings for net from scratch
-			trainingFile = getValue(input, TRAINING_PROMPT); // Training File
+		
+		//Prompt user for all settings
+		this.setTrainingFile(null);
+		this.setTrainingWeights(-1);
+		this.setMaxEpochs(-1);
+		this.setWeightsFile(null, false);
+		this.setLearningRate(-1);
+		this.setThresholdTheta(-1);
+		this.setThresholdWeightChanges(-1);
+	}
 
-			// random weights or no
-			if (getValue(input, INITIALIZED_WEIGHTS_PROMPT).equals("1")) {
-				randomWeightValues = true;
-			} else {
-				randomWeightValues = false;
-			}
-
-			maxEpochs = Integer.parseInt(getValue(input, MAX_EPOCHS_PROMPT)); // Max epochs
-			weightsFile = getValue(input, WEIGHT_FILE_PROMPT); // weights file
-
-			// Learning rate
-			do {
-				learningRate = Double.parseDouble(getValue(input, LEARNING_RATE_PROMPT));
-			} while (!validLearningRate());
-
-			thresholdTheta = Double.parseDouble(getValue(input, THRESHOLD_THETA_PROMPT)); // Threshold theta
-			thresholdWeightChanges = Double.parseDouble(getValue(input, THRESHOLD_WEIGHT_CHANGE_PROMPT)); // Threshold
-																											// weight
-																											// changes
+	public void setTrainingFile(String trainingFile) {
+		if (trainingFile == null) {
+			input = new Scanner(System.in);
+			System.out.println(TRAINING_PROMPT);
+			this.trainingFile = input.next();
+			System.out.println();
 		} else {
-			// Get settings for net from file
-			weightsFile = getValue(input, WEIGHT_FILE_PROMPT);
+			this.trainingFile = trainingFile;
 		}
 	}
 
+	public void setTrainingWeights(int randomWeights) {
+		if (randomWeights == -1) {
+			System.out.print(INITIALIZED_WEIGHTS_PROMPT);
+			if (input.nextInt() == 1) {
+				this.randomWeightValues = true;
+			} else {
+				this.randomWeightValues = false;
+			}
+			System.out.println();
+		} else if (randomWeights == 0) {
+			this.randomWeightValues = false;
+		} else if (randomWeights == 1) {
+			this.randomWeightValues = true;
+		} else {
+			System.out.println("Invalid value for random weights.");
+			System.exit(-1);
+		}
+	}
+
+	public void setMaxEpochs(int maxEpochs) {
+		if (maxEpochs == -1) {
+			do {
+				System.out.print(MAX_EPOCHS_PROMPT);
+				this.maxEpochs = input.nextInt();
+				System.out.println();
+				if (this.maxEpochs < 1)
+					System.out.println(this.maxEpochs + " is not a valid value for max epochs");
+			} while (this.maxEpochs < 1);
+		} else {
+			this.maxEpochs = maxEpochs;
+		}
+	}
+
+	public void setLearningRate(double learningRate) {
+		if (learningRate == -1) {
+			do {
+				System.out.print(LEARNING_RATE_PROMPT);
+				this.learningRate = input.nextDouble();
+				System.out.println();
+			} while (!validLearningRate());
+		} else {
+			this.learningRate = learningRate;
+		}
+	}
+
+	public void setThresholdTheta(double thresholdTheta) {
+		if (thresholdTheta < 0) {
+			do {
+				System.out.print(THRESHOLD_THETA_PROMPT);
+				this.thresholdTheta = input.nextDouble();
+				System.out.println();
+				if (this.thresholdTheta < -0.1)
+					System.out.println("Threshold theta must be at least 0");
+			} while (this.thresholdTheta < -0.1);
+		} else {
+			this.thresholdTheta = thresholdTheta;
+		}
+	}
+
+	public void setThresholdWeightChanges(double weightChangesThreshold){
+		if(weightChangesThreshold < 0){
+			do {
+				System.out.print(THRESHOLD_WEIGHT_CHANGE_PROMPT);
+				this.thresholdWeightChanges = input.nextDouble();
+				System.out.println();
+				if (this.thresholdWeightChanges < -0.1)
+					System.out.println("Threshold theta must be at least 0");
+			} while (this.thresholdWeightChanges < -0.1);
+		} else {
+			this.thresholdWeightChanges = weightChangesThreshold;
+		}
+	}
+	
 	public void setDeploymentFile(String deploymentFile) {
 		if (deploymentFile == null) {
-			Scanner input = new Scanner(System.in);
+			input = new Scanner(System.in);
 			System.out.print(DEPLOYMENT_FILE_PROMPT);
 			this.deploymentFile = input.next();
 			System.out.println();
@@ -130,15 +198,16 @@ public class PerceptronSettings {
 		}
 	}
 
-	public void setWeightsFile(String file) {
+	public void setWeightsFile(String file, boolean loadFromFile) {
 		if (file == null) {
-			Scanner input = new Scanner(System.in);
+			input = new Scanner(System.in);
 			System.out.print(WEIGHT_FILE_PROMPT);
 			this.weightsFile = input.next();
 			System.out.println();
 		} else {
 			this.weightsFile = file;
 		}
+		this.weightsFromFile = loadFromFile;
 	}
 
 	public void printNetInitializationSettings() {
@@ -172,6 +241,10 @@ public class PerceptronSettings {
 
 	public String getWeightsFile() {
 		return weightsFile;
+	}
+	
+	public boolean loadWeightsFromFile(){
+		return weightsFromFile;
 	}
 
 	public String getDeploymentFile() {

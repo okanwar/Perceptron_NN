@@ -4,52 +4,23 @@ import java.util.StringTokenizer;
 
 public class TrainingSet extends PatternSet {
 	private static final String DIVIDER = "--------------------------------------------------------------------------------------------------------------------\n";
-	private double[][] weights;
-	private double[] biasWeights;
 	private double maxWeightChange;
 	private String weightChanges;
 
-	public TrainingSet(String trainingFile, boolean randomWeights) {
+	public TrainingSet(PerceptronSettings ps) {
 		// Setup pattern set
-		super(trainingFile);
+		super(ps.getTrainingFile(), ps);
 
 		// Training Set
 		maxWeightChange = 0;
-		weights = null;
-		biasWeights = null;
 		weightChanges = DIVIDER + "Training Results\n" + DIVIDER;
-		if (super.setInitialized) {
-			weights = new double[outputPatternSize][inputPatternSize];
-			biasWeights = new double[outputPatternSize];
-			// loadTrainingSet();
-			initializeWeights(randomWeights);
-//			printTrainingSet();
-		} 
-	}
-
-	public TrainingSet(String weightsFile) {
-		super(null);
-		readWeights(weightsFile);
-	}
-
-	public double[][] getWeights() {
-		return weights;
-	}
-
-	public double[] getWeightsForOutput(int output) {
-		return weights[output];
-	}
-
-	public double getWeightsForOutputAt(int output, int input) {
-		return weights[output][input];
-	}
-
-	public double[] getBiasWeights() {
-		return biasWeights;
-	}
-
-	public double getBiasWeight(int outputNeuron) {
-		return biasWeights[outputNeuron];
+//		if (super.setInitialized) {
+//			weights = new double[outputPatternSize][inputPatternSize];
+//			biasWeights = new double[outputPatternSize];
+//			// loadTrainingSet();
+////			initializeWeights(randomWeights);
+////			printTrainingSet();
+//		} 
 	}
 
 	public void updateBiasWeight(int outputNeuron, double newBias) {
@@ -80,88 +51,88 @@ public class TrainingSet extends PatternSet {
 		maxWeightChange = 0;
 	}
 
-	private void initializeWeights(boolean randomWeights) {
-		double weightValue = 0;
-		Random rand = null;
-		if (randomWeights) {
-			rand = new Random();
-		}
-		try {
-			// Initialize Neuron weights
-			for (int output = 0; output < outputPatternSize; output++) {
-				// Initialize all weights of input pattern for output neuron
-				for (int input = 0; input < inputPatternSize; input++) {
-					if (randomWeights) {
-						// Get random weight value
-						weightValue = rand.nextDouble() - 0.5;
-					}
-					weights[output][input] = weightValue;
-				}
-			}
+//	private void initializeWeights(boolean randomWeights) {
+//		double weightValue = 0;
+//		Random rand = null;
+//		if (randomWeights) {
+//			rand = new Random();
+//		}
+//		try {
+//			// Initialize Neuron weights
+//			for (int output = 0; output < outputPatternSize; output++) {
+//				// Initialize all weights of input pattern for output neuron
+//				for (int input = 0; input < inputPatternSize; input++) {
+//					if (randomWeights) {
+//						// Get random weight value
+//						weightValue = rand.nextDouble() - 0.5;
+//					}
+//					weights[output][input] = weightValue;
+//				}
+//			}
+//
+//			// Initialize bias weigts
+//			weightValue = 0;
+//			for (int biasCount = 0; biasCount < outputPatternSize; biasCount++) {
+//				if (randomWeights) {
+//					// Get random weight value
+//					weightValue = rand.nextDouble() - 0.5;
+//				}
+//				biasWeights[biasCount] = weightValue;
+//			}
+//
+//		} catch (Exception e) {
+//			System.out.println("Error initializing weights. " + e);
+//		}
+//	}
 
-			// Initialize bias weigts
-			weightValue = 0;
-			for (int biasCount = 0; biasCount < outputPatternSize; biasCount++) {
-				if (randomWeights) {
-					// Get random weight value
-					weightValue = rand.nextDouble() - 0.5;
-				}
-				biasWeights[biasCount] = weightValue;
-			}
-
-		} catch (Exception e) {
-			System.out.println("Error initializing weights. " + e);
-		}
-	}
-
-	public void readWeights(String weightsFile) {
-		BufferedReader reader = null;
-		String line = "";
-		try {
-			reader = new BufferedReader(new FileReader(weightsFile));
-			int sizeofInputPattern = Integer.parseInt(reader.readLine().trim());
-			int sizeofOutputPattern = Integer.parseInt(reader.readLine().trim());
-			weights = new double[sizeofOutputPattern][sizeofInputPattern];
-			biasWeights = new double[sizeofOutputPattern];
-			int patternIndex = 0;
-			int readLine = 0;
-			while ((line = reader.readLine()) != null) {
-				if (!line.isEmpty()) {
-					System.out.println(line);
-					if (readLine == 0) {
-						double biasweight = Double.parseDouble(line.trim());
-						biasWeights[patternIndex] = Double.parseDouble(line.trim());
-						System.out.println("BIAS WEIGHT:" + biasweight);
-
-					} else if (patternIndex == sizeofOutputPattern) {
-						return;
-					} else {
-						// Readline is all weights for output index
-						StringTokenizer st = new StringTokenizer(line, " ");
-						int weightIndex = 0;
-						while (st.hasMoreTokens()) {
-							System.out.print("SET WEIGHT FOR: [" + patternIndex + "][" + weightIndex + "]");
-							String token = st.nextToken();
-							System.out.println("\t" + token);
-							weights[patternIndex][weightIndex] = Double.parseDouble(token);
-							System.out.println(" to " + weights[patternIndex][weightIndex]);
-							weightIndex++;
-						}
-					}
-
-					readLine++;
-					if (readLine == 2) {
-						// Read both weights
-						readLine = 0;
-						patternIndex++;
-					}
-
-				}
-			}
-		} catch (Exception e) {
-			System.out.println("Error reading weights from file" + e);
-		}
-	}
+//	public void readWeights(String weightsFile) {
+//		BufferedReader reader = null;
+//		String line = "";
+//		try {
+//			reader = new BufferedReader(new FileReader(weightsFile));
+//			int sizeofInputPattern = Integer.parseInt(reader.readLine().trim());
+//			int sizeofOutputPattern = Integer.parseInt(reader.readLine().trim());
+//			weights = new double[sizeofOutputPattern][sizeofInputPattern];
+//			biasWeights = new double[sizeofOutputPattern];
+//			int patternIndex = 0;
+//			int readLine = 0;
+//			while ((line = reader.readLine()) != null) {
+//				if (!line.isEmpty()) {
+//					System.out.println(line);
+//					if (readLine == 0) {
+//						double biasweight = Double.parseDouble(line.trim());
+//						biasWeights[patternIndex] = Double.parseDouble(line.trim());
+//						System.out.println("BIAS WEIGHT:" + biasweight);
+//
+//					} else if (patternIndex == sizeofOutputPattern) {
+//						return;
+//					} else {
+//						// Readline is all weights for output index
+//						StringTokenizer st = new StringTokenizer(line, " ");
+//						int weightIndex = 0;
+//						while (st.hasMoreTokens()) {
+//							System.out.print("SET WEIGHT FOR: [" + patternIndex + "][" + weightIndex + "]");
+//							String token = st.nextToken();
+//							System.out.println("\t" + token);
+//							weights[patternIndex][weightIndex] = Double.parseDouble(token);
+//							System.out.println(" to " + weights[patternIndex][weightIndex]);
+//							weightIndex++;
+//						}
+//					}
+//
+//					readLine++;
+//					if (readLine == 2) {
+//						// Read both weights
+//						readLine = 0;
+//						patternIndex++;
+//					}
+//
+//				}
+//			}
+//		} catch (Exception e) {
+//			System.out.println("Error reading weights from file" + e);
+//		}
+//	}
 
 	public void printTrainingSet() {
 		printSet();
@@ -212,10 +183,11 @@ public class TrainingSet extends PatternSet {
 		BufferedWriter writer = null;
 		try {
 			writer = new BufferedWriter(new FileWriter("output_file.txt"));
-			writer.write(Integer.toString(inputPatternSize));
-			writer.newLine();
-			writer.write(Integer.toString(outputPatternSize));
-			writer.newLine();
+//			writer.write(Integer.toString(inputPatternSize));
+//			writer.newLine();
+//			writer.write(Integer.toString(outputPatternSize));
+//			writer.newLine();
+			writer.write(Double.toString(p_settings.getThresholdTheta()) + "\n");
 			for (int i = 0; i < outputPatternSize; i++) {
 				writer.write(Double.toString(biasWeights[i]) + " \n");
 				for (int j = 0; j < inputPatternSize; j++) {
@@ -223,9 +195,10 @@ public class TrainingSet extends PatternSet {
 				}
 				writer.newLine();
 			}
-			writer.write(Double.toString(threshold_theta.getThresholdTheta()));
+//			writer.write(Double.toString(threshold_theta.getThresholdTheta()));
 			writer.close();
 		} catch (Exception e) {
+			System.out.println("Error printing weights to file.");
 		}
 	}
 }

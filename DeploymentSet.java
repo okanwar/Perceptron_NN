@@ -5,9 +5,9 @@ public class DeploymentSet extends PatternSet {
 
 	int correctlyClassified, incorrectlyClassified; 
 
-	public DeploymentSet(String file) {
-		super(file);
-		correctlyClassified = 0;
+	public DeploymentSet(PerceptronSettings ps) {
+		super(ps.getDeploymentFile(), ps);
+		correctlyClassified = 0; 
 		incorrectlyClassified = 0;
 //		printSet();
 	}

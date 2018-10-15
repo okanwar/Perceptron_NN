@@ -17,7 +17,7 @@ public class Perceptron {
 	}
 
 	public void trainNet() {
-		trainingSet = new TrainingSet(p_settings.getTrainingFile(), p_settings.initializeWithRandomWeights());
+		trainingSet = new TrainingSet(p_settings);
 		if (!validateTrainingVariables())
 			System.exit(-1);
 
@@ -41,7 +41,7 @@ public class Perceptron {
 				// Compute activation for single output neuron
 				for (int outputNeuron = 0; outputNeuron < trainingSet.getOutputPatternSize(); outputNeuron++) {
 
-					int output = computeActivation(computeYin(currentTrainingPattern, outputNeuron));
+					int output = computeActivation(computeYin(currentTrainingPattern, outputNeuron, true));
 
 					// Check if weights need updating
 					if (output != currentTrainingPattern.outputAt(outputNeuron)) {
@@ -84,7 +84,7 @@ public class Perceptron {
 	}
 
 	public void deployNet() {
-		deploymentSet = new DeploymentSet(p_settings.getDeploymentFile());
+		deploymentSet = new DeploymentSet(p_settings);
 		if (!validateDeploymentVariables())
 			System.exit(-1);
 
@@ -97,7 +97,7 @@ public class Perceptron {
 			// Classify a single pattern
 			for (int output = 0; output < deploymentSet.getOutputPatternSize(); output++) {
 				// Compute yin for each output neuron
-				double yin = computeYin(patternSet[patternIndex], output);
+				double yin = computeYin(patternSet[patternIndex], output, false);
 				int outputActivated = computeActivation(yin);
 				classification[output] = outputActivated;
 			}
@@ -111,12 +111,12 @@ public class Perceptron {
 			deploymentSet.isClassifiedCorrectly(classification, patternIndex);
 		}
 		System.out.println("Correclty classified:" + deploymentSet.numCorrectlyClassifiedPatterns()
-				+ "\nCorrectly classified:" + deploymentSet.numIncorrecltyClassifiedPatterns());
+				+ "\nIncorrectly classified:" + deploymentSet.numIncorrecltyClassifiedPatterns());
 	}
 
-	public void setWeightsFromFile() {
-		trainingSet = new TrainingSet(p_settings.getWeightsFile());
-	}
+//	public void setWeightsFromFile() {
+//		trainingSet = new TrainingSet(p_settings.getWeightsFile());
+//	}
 
 	private double calculateNewWeight(Pattern p, int sampleNeuron, int outputNeuron) {
 		double oldWeight = trainingSet.getWeightsForOutputAt(outputNeuron, sampleNeuron);
@@ -150,13 +150,27 @@ public class Perceptron {
 		return output;
 	}
 
-	private double computeYin(Pattern p, int j) {
+	private double computeYin(Pattern p, int j, boolean training) {
 
-		int position = -1;
-		int rowsOfInput = trainingSet.getInputPatternSize() / trainingSet.getOutputPatternSize();
-		double[][] weights = trainingSet.getWeights();
-		double sum = trainingSet.getBiasWeight(j);
-		for (int i = 0; i < trainingSet.getInputPatternSize(); i++) {
+		int rowsOfInput =  -1;
+		int inputPatternSize = -1;
+		double[][] weights = null;
+		double sum = -1;
+		
+		//Set values according to train/deploy
+		if(training){
+			inputPatternSize = trainingSet.getInputPatternSize();
+			rowsOfInput = trainingSet.getInputPatternSize() / trainingSet.getOutputPatternSize();
+			weights = trainingSet.getWeights();
+			sum = trainingSet.getBiasWeight(j);
+		} else {
+			inputPatternSize = deploymentSet.getInputPatternSize();
+			rowsOfInput = deploymentSet.getInputPatternSize() / deploymentSet.getOutputPatternSize();
+			weights = deploymentSet.getWeights();
+			sum = deploymentSet.getBiasWeight(j);
+		}
+		
+		for (int i = 0; i < inputPatternSize; i++) {
 			try {
 				sum += weights[j][i] * p.inputAt(i);
 			} catch (Exception e) {
