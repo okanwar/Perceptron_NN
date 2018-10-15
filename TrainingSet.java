@@ -145,5 +145,16 @@ public class TrainingSet extends PatternSet{
 			System.out.println("Error writing verbose train results");
 		}
 	}
-
+    public void weightsWriter(String input_file, PerceptronSettings threshold_theta) {
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new FileWriter("output_file.txt"));
+            for (int i = 0; i < outputPatternSize; i++) {
+                    writer.write(biasWeights[i]);
+                for(int j = 0; j < inputPatternSize; j++) {
+                    writer.write(weights[i][j] + " ");
+                }
+            }
+            writer.write(threshold_theta.getThresholdTheta());
+        }
 }
