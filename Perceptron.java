@@ -17,9 +17,13 @@ public class Perceptron {
 	}
 
 	public void trainNet() {
+		//Create and validate training set
 		trainingSet = new TrainingSet(p_settings);
-		if (!validateTrainingVariables())
+		if (!validateTrainingVariables()) {
 			System.exit(-1);
+		} else {
+			p_settings.setTrainingSet(trainingSet);
+		}
 
 		// Setup
 		Pattern[] patternSet = trainingSet.getPatternSet();
@@ -78,12 +82,13 @@ public class Perceptron {
 		} else {
 			System.out.println("Converged after " + currentEpoch + " epochs");
 		}
-		trainingSet.weightsWriter(p_settings.getWeightsFile(), p_settings);
+		trainingSet.weightsWriter(p_settings.getWeightsFile());
 		if (verboseTrain)
 			trainingSet.finalizeResults(p_settings.getTrainingFile());
 	}
 
 	public void deployNet() {
+		//Create and validate deployment set
 		deploymentSet = new DeploymentSet(p_settings);
 		if (!validateDeploymentVariables())
 			System.exit(-1);
@@ -114,9 +119,6 @@ public class Perceptron {
 				+ "\nIncorrectly classified:" + deploymentSet.numIncorrecltyClassifiedPatterns());
 	}
 
-//	public void setWeightsFromFile() {
-//		trainingSet = new TrainingSet(p_settings.getWeightsFile());
-//	}
 
 	private double calculateNewWeight(Pattern p, int sampleNeuron, int outputNeuron) {
 		double oldWeight = trainingSet.getWeightsForOutputAt(outputNeuron, sampleNeuron);
@@ -170,6 +172,7 @@ public class Perceptron {
 			sum = deploymentSet.getBiasWeight(j);
 		}
 		
+		//Run yin calculation
 		for (int i = 0; i < inputPatternSize; i++) {
 			try {
 				sum += weights[j][i] * p.inputAt(i);
@@ -192,6 +195,11 @@ public class Perceptron {
 			if (trainingSet == null) {
 				System.out.println("Missing training set.");
 				return false;
+			} else {
+				if(!trainingSet.setInitialized()) {
+					System.out.println("Training set failed to initalize");
+					return false;
+				}
 			}
 		} else {
 			System.out.println("Missing training file.");
@@ -248,6 +256,11 @@ public class Perceptron {
 			if (deploymentSet == null) {
 				System.out.println("Missing deployment set.");
 				return false;
+			} else {
+				if(!deploymentSet.setInitialized()) {
+					System.out.println("Deployment set failed to initalize.");
+					return false;
+				}
 			}
 		} else {
 			System.out.println("Missing deployment file.");

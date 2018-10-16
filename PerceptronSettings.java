@@ -13,11 +13,13 @@ public class PerceptronSettings {
 	private static final String THRESHOLD_THETA_PROMPT = "Enter the threshold theta:";
 	private static final String THRESHOLD_WEIGHT_CHANGE_PROMPT = "Enter the threshold for measuring weight changes:";
 	private static final String DEPLOYMENT_FILE_PROMPT = "Enter the testing/deployment file name:";
+	
 	private String trainingFile, weightsFile, deploymentFile;
 	private boolean randomWeightValues, weightsFromFile;
 	private int maxEpochs;
 	private double learningRate, thresholdTheta, thresholdWeightChanges;
 	private Scanner input;
+	private TrainingSet trainingSet;
 
 	public PerceptronSettings() {
 		this(null, null, false, -1, -1, -1, -1, null);
@@ -41,53 +43,7 @@ public class PerceptronSettings {
 		this.deploymentFile = deploymentFile;
 		this.weightsFile = weightsFile;
 		this.input = null;
-	}
-
-	public void setSettings() {
-
-//		input = new Scanner(System.in);
-//
-//		// Training file
-//		System.out.print(TRAINING_PROMPT);
-//		trainingFile = input.next();
-//		System.out.println();
-//
-//		// Random weights
-//		System.out.print(INITIALIZED_WEIGHTS_PROMPT);
-//		if (input.nextInt() == 1) {
-//			randomWeightValues = true;
-//		} else {
-//			randomWeightValues = false;
-//		}
-//		System.out.println();
-//
-//		// Max epochs
-//		System.out.print(MAX_EPOCHS_PROMPT);
-//		maxEpochs = input.nextInt();
-//		System.out.println();
-//
-//		// Weight file
-//		System.out.print(WEIGHT_FILE_PROMPT);
-//		weightsFile = input.next();
-//		System.out.println();
-//
-//		// learning rate
-//		do {
-//			System.out.print(LEARNING_RATE_PROMPT);
-//			learningRate = input.nextDouble();
-//			System.out.println();
-//		} while (!validLearningRate());
-//
-//		// threshold theta
-//		System.out.print(THRESHOLD_THETA_PROMPT);
-//		thresholdTheta = input.nextDouble();
-//		System.out.println();
-//
-//		// threshold weight changes
-//		System.out.print(THRESHOLD_WEIGHT_CHANGE_PROMPT);
-//		thresholdWeightChanges = input.nextDouble();
-//		System.out.println();
-
+		this.trainingSet = null;
 	}
 
 	public void setUserSettings() {
@@ -220,6 +176,14 @@ public class PerceptronSettings {
 						+ weightsFile + "\n" + "Learning rate: " + learningRate + "\n" + "Threshold theta: "
 						+ thresholdTheta + "\n" + "Threshold to measure weight changes: " + thresholdWeightChanges);
 		System.out.println("------------------------------------");
+	}
+	
+	public TrainingSet getTrainingSet() {
+		return this.trainingSet;
+	}
+	
+	public void setTrainingSet(TrainingSet ts) {
+		this.trainingSet = ts;
 	}
 
 	public String[] getSettings() {
