@@ -3,7 +3,7 @@ import java.util.Random;
 import java.util.StringTokenizer;
 
 public class TrainingSet extends PatternSet {
-	private static final String DIVIDER = "--------------------------------------------------------------------------------------------------------------------\n";
+	
 	private double maxWeightChange;
 	private String weightChanges;
 
@@ -105,7 +105,7 @@ public class TrainingSet extends PatternSet {
 			}
 			writer.close();
 			
-			System.out.println("\nSaved weights from training to: " + input_file);
+			System.out.println("\nSaved weights from training to: " + input_file + "\n");
 			
 		} catch (Exception e) {
 			System.out.println("Error printing weights to file. " + e);

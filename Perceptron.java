@@ -3,6 +3,7 @@ import java.util.*;
 import java.lang.*;
 
 public class Perceptron {
+	private static final String DIVIDER = "------------------------------------";
 	private PerceptronSettings p_settings;
 	private TrainingSet trainingSet;
 	private DeploymentSet deploymentSet;
@@ -12,17 +13,17 @@ public class Perceptron {
 	public Perceptron(PerceptronSettings p_settings, boolean verboseTrain) {
 		this.p_settings = p_settings;
 		this.verboseTrain = verboseTrain;
-		p_settings.printNetInitializationSettings();
 		deploymentSet = null;
 	}
 
 	public void trainNet() {
-		//Create and validate training set
+		// Create and validate training set
 		trainingSet = new TrainingSet(p_settings);
 		if (!validateTrainingVariables()) {
 			System.exit(-1);
 		} else {
 			p_settings.setTrainingSet(trainingSet);
+			p_settings.printNetInitializationSettings();
 		}
 
 		// Setup
@@ -56,7 +57,9 @@ public class Perceptron {
 								calculateNewBiasWeight(currentTrainingPattern, outputNeuron)); // Update bias
 						for (int inputNeuron = 0; inputNeuron < trainingSet.getInputPatternSize(); inputNeuron++) {
 							trainingSet.updateInputWeightForIndex(outputNeuron, inputNeuron,
-									calculateNewWeight(currentTrainingPattern, inputNeuron, outputNeuron)); // Update input weights													
+									calculateNewWeight(currentTrainingPattern, inputNeuron, outputNeuron)); // Update
+																											// input
+																											// weights
 						}
 						if (verboseTrain)
 							trainingSet.sendEndStatus();
@@ -78,9 +81,9 @@ public class Perceptron {
 		}
 
 		if (!converged) {
-			System.out.println("Reached max epochs and failed to converge");
+			System.out.println("\nReached max epochs and failed to converge");
 		} else {
-			System.out.println("Converged after " + currentEpoch + " epochs");
+			System.out.println("\nConverged after " + currentEpoch + " epochs");
 		}
 		trainingSet.weightsWriter(p_settings.getWeightsFile());
 		if (verboseTrain)
@@ -88,7 +91,7 @@ public class Perceptron {
 	}
 
 	public void deployNet() {
-		//Create and validate deployment set
+		// Create and validate deployment set
 		deploymentSet = new DeploymentSet(p_settings);
 		if (!validateDeploymentVariables())
 			System.exit(-1);
@@ -106,19 +109,15 @@ public class Perceptron {
 				int outputActivated = computeActivation(yin);
 				classification[output] = outputActivated;
 			}
-			System.out.print("Classification for pattern " + patternIndex + " = [");
-			for (int i = 0; i < classification.length; i++) {
-				System.out.print(classification[i] + " ");
-			}
-			System.out.println("]");
-
+			
 			// Verify classification of pattern
 			deploymentSet.isClassifiedCorrectly(classification, patternIndex);
 		}
-		System.out.println("Correclty classified:" + deploymentSet.numCorrectlyClassifiedPatterns()
+		System.out.println("\nDeployment on set: " + p_settings.getDeploymentFile() + "\n" + DIVIDER
+				+ "\nCorreclty classified:" + deploymentSet.numCorrectlyClassifiedPatterns()
 				+ "\nIncorrectly classified:" + deploymentSet.numIncorrecltyClassifiedPatterns());
+		deploymentSet.logResults();
 	}
-
 
 	private double calculateNewWeight(Pattern p, int sampleNeuron, int outputNeuron) {
 		double oldWeight = trainingSet.getWeightsForOutputAt(outputNeuron, sampleNeuron);
@@ -154,13 +153,13 @@ public class Perceptron {
 
 	private double computeYin(Pattern p, int j, boolean training) {
 
-		int rowsOfInput =  -1;
+		int rowsOfInput = -1;
 		int inputPatternSize = -1;
 		double[][] weights = null;
 		double sum = -1;
-		
-		//Set values according to train/deploy
-		if(training){
+
+		// Set values according to train/deploy
+		if (training) {
 			inputPatternSize = trainingSet.getInputPatternSize();
 			rowsOfInput = trainingSet.getInputPatternSize() / trainingSet.getOutputPatternSize();
 			weights = trainingSet.getWeights();
@@ -171,8 +170,8 @@ public class Perceptron {
 			weights = deploymentSet.getWeights();
 			sum = deploymentSet.getBiasWeight(j);
 		}
-		
-		//Run yin calculation
+
+		// Run yin calculation
 		for (int i = 0; i < inputPatternSize; i++) {
 			try {
 				sum += weights[j][i] * p.inputAt(i);
@@ -196,7 +195,7 @@ public class Perceptron {
 				System.out.println("Missing training set.");
 				return false;
 			} else {
-				if(!trainingSet.setInitialized()) {
+				if (!trainingSet.setInitialized()) {
 					System.out.println("Training set failed to initalize");
 					return false;
 				}
@@ -257,7 +256,7 @@ public class Perceptron {
 				System.out.println("Missing deployment set.");
 				return false;
 			} else {
-				if(!deploymentSet.setInitialized()) {
+				if (!deploymentSet.setInitialized()) {
 					System.out.println("Deployment set failed to initalize.");
 					return false;
 				}
@@ -266,8 +265,8 @@ public class Perceptron {
 			System.out.println("Missing deployment file.");
 			return false;
 		}
-		
-		//Weights
+
+		// Weights
 
 		return true;
 	}

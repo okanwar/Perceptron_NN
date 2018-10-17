@@ -4,6 +4,7 @@ import java.lang.*;
 
 public class PatternSet {
 
+	protected static final String DIVIDER = "--------------------------------------------------------------------------------------------------------------------\n";
 	protected String dataFile;
 	protected Pattern[] patternSet;
 	protected int inputPatternSize, outputPatternSize, numberOfTrainingPatterns;

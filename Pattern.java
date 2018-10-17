@@ -34,6 +34,10 @@ public class Pattern{
 		return input_array.length;
 	}
 
+	public String getClassificationVector(int index) {
+		return Arrays.toString(output_array);
+	}
+	
 	public String getClassification() {
 		return classification_string;
 	}
