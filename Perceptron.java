@@ -19,7 +19,7 @@ public class Perceptron {
 	private String verboseTrainFileOutput;
 
 	/*
-	 * Construcotr
+	 * Constructor
 	 * @param p_settings The settings object to initialize the net from
 	 * @param verboseTrain Boolean signaling whether to log training or not
 	 */

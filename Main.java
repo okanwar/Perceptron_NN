@@ -88,7 +88,7 @@ public class Main {
 							}
 
 							// Initialize perceptron with parsed settings
-							Perceptron p1 = new Perceptron(new PerceptronSettings(userSettings), true);
+							Perceptron p1 = new Perceptron(new PerceptronSettings(userSettings), false);
 							p1.trainNet();
 							p1.deployNet();
 						} else {

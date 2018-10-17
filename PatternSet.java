@@ -172,34 +172,42 @@ public class PatternSet {
 			String inputPattern = "";
 			String outputPattern = "";
 			String classification = "";
+			String lines = "";
+			StringTokenizer st = null;
 
 			// Read a single sample
 			while ((line = reader.readLine()) != null) {
 				if (!line.isEmpty()) {
-					if (sampleIndex < linesOfInputPattern) {
-						// Reading input pattern
-						inputPattern += line + " ";
-					} else if (sampleIndex == linesOfInputPattern) {
-						// Reading output pattern
-						outputPattern = line + " ";
+					if(line.trim().indexOf(" ") != -1) {
+						//Reading input and output patterns
+						lines+=line + "|";
 					} else {
-						// Reading classification
-						classification = line;
-
-						// Create new training pair
+						//Found classification
+						st = new StringTokenizer(lines, "|");
+						int numTokens = st.countTokens();
+						int tokenNum = 0;
+						String input_string = "";
+						String output_string = "";
+						//Get input and output patterns
+						while(st.hasMoreTokens()) {
+							if(tokenNum != (numTokens-1)) {
+								input_string += st.nextToken() + " ";
+							} else {
+								output_string = st.nextToken();
+							}
+							tokenNum++;
+						}
+						
+						//Create pattern
 						Pattern p1 = new Pattern(inputPatternSize, outputPatternSize);
-						p1.getStrings(inputPattern, outputPattern, classification);
+						p1.getStrings(input_string, output_string, line.trim());
 						patternSet[trainingSetIndex] = p1;
 						trainingSetIndex++;
-
-						// Reset
-						sampleIndex = 0;
-						inputPattern = "";
-						outputPattern = "";
-
-						continue;
+						lines = "";
 					}
-					sampleIndex++;
+					
+					
+					
 				}
 			}
 			setInitialized = true;
