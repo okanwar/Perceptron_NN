@@ -2,6 +2,14 @@ import java.io.*;
 import java.util.*;
 import java.lang.*;
 
+/*
+ * Perceptron
+ * 
+ * Defines a perceptron and the functions the perceptron uses to train and deploy on pattern sets.
+ * 
+ * @author Michael Dana, Om Kanwar
+ */
+
 public class Perceptron {
 	private static final String DIVIDER = "------------------------------------";
 	private PerceptronSettings p_settings;
@@ -10,12 +18,21 @@ public class Perceptron {
 	private boolean verboseTrain;
 	private String verboseTrainFileOutput;
 
+	/*
+	 * Construcotr
+	 * @param p_settings The settings object to initialize the net from
+	 * @param verboseTrain Boolean signaling whether to log training or not
+	 */
 	public Perceptron(PerceptronSettings p_settings, boolean verboseTrain) {
 		this.p_settings = p_settings;
 		this.verboseTrain = verboseTrain;
 		deploymentSet = null;
 	}
 
+	/*
+	 * trainNet - A method that executes the training of the perceptron from
+	 * settings
+	 */
 	public void trainNet() {
 		// Create and validate training set
 		trainingSet = new TrainingSet(p_settings);
@@ -90,6 +107,9 @@ public class Perceptron {
 			trainingSet.finalizeResults(p_settings.getTrainingFile());
 	}
 
+	/*
+	 * deployNet - A method that deploys the preceptron net on a file from settings
+	 */
 	public void deployNet() {
 		// Create and validate deployment set
 		deploymentSet = new DeploymentSet(p_settings);
@@ -109,16 +129,25 @@ public class Perceptron {
 				int outputActivated = computeActivation(yin);
 				classification[output] = outputActivated;
 			}
-			
+
 			// Verify classification of pattern
 			deploymentSet.isClassifiedCorrectly(classification, patternIndex);
 		}
+
+		// Finialize results
 		System.out.println("\nDeployment on set: " + p_settings.getDeploymentFile() + "\n" + DIVIDER
 				+ "\nCorreclty classified:" + deploymentSet.numCorrectlyClassifiedPatterns()
 				+ "\nIncorrectly classified:" + deploymentSet.numIncorrecltyClassifiedPatterns());
 		deploymentSet.logResults();
 	}
 
+	/*
+	 * calculateNewWeight - A method that calculates the new weight of a pattern given the neuron indices
+	 * @param p The pattern the new weight is updated from
+	 * @param sampleNeuron The index of the input neuron the weight is updated for
+	 * @param outputNeuron The index of the output neuron the weight is updated for
+	 * @return Returns a double, which is the calculated new weight
+	 */
 	private double calculateNewWeight(Pattern p, int sampleNeuron, int outputNeuron) {
 		double oldWeight = trainingSet.getWeightsForOutputAt(outputNeuron, sampleNeuron);
 		int patternInput = p.inputAt(sampleNeuron);
@@ -127,6 +156,12 @@ public class Perceptron {
 		return newWeight;
 	}
 
+	/*
+	 * calculateNewBiasWeight - Calculates the new bias weight of an output neuron given a pattern
+	 * @param p The pattern the new weight is calculated with
+	 * @param outputNeuron The output neuron the bias weight is calculated for
+	 * @return Returns a double, this is the new bias weight for the output neuron outputNeuron
+	 */
 	private double calculateNewBiasWeight(Pattern p, int outputNeuron) {
 		double oldBiasWeight = trainingSet.getBiasWeight(outputNeuron);
 		double learningRate = p_settings.getLearningRate();
@@ -135,6 +170,11 @@ public class Perceptron {
 		return newBiasWeight;
 	}
 
+	/*
+	 * computeActivation - Computes the activation of a Yin value given a threshold, uses step function
+	 * @param yin The value activation is computed for
+	 * @retun Returns an integer which is the activation given yin
+	 */
 	private int computeActivation(double yin) {
 		int output = -1;
 		if (yin > p_settings.getThresholdTheta()) {
@@ -151,6 +191,13 @@ public class Perceptron {
 		return output;
 	}
 
+	/*
+	 * computeYin - Computes the Yin given the pattern and output neuron index
+	 * @param p The pattern Yin is computed for
+	 * @param j The output neuron Yin is computed for
+	 * @param training A boolean signaling whether the calculation is done for deployment or training, just control variables
+	 * @return The calculated Yin value
+	 */
 	private double computeYin(Pattern p, int j, boolean training) {
 
 		int rowsOfInput = -1;
@@ -182,6 +229,11 @@ public class Perceptron {
 		return sum;
 	}
 
+	/*
+	 * validateTrainingVariables - A method that checks all required variables needed for training, determining if they are valid,
+	 * 	ensures the net was setup correctly.
+	 * @return A boolean signaling whether the net was successfully setup or not, true for success
+	 */
 	private boolean validateTrainingVariables() {
 		// p_settings
 		if (p_settings == null) {
@@ -243,6 +295,10 @@ public class Perceptron {
 		return true;
 	}
 
+	/*
+	 * validateDeploymentVariables - A method that checks and validates all  variables needed for deployment are set and valid.
+	 * @return Boolean signaling whether the net has been setup correctly for deployment, true on success
+	 */
 	private boolean validateDeploymentVariables() {
 		// p_settings
 		if (p_settings == null) {

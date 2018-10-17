@@ -4,11 +4,23 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Arrays;
 
+/*
+ * DeploymentSet 
+ * 
+ * Defines functions and properties specific to deploying a net
+ * 
+ * @author Michael Dana, Om Kanwar
+ */
+
 public class DeploymentSet extends PatternSet {
 
 	private int correctlyClassified, incorrectlyClassified;
 	private String classificationHistory;
 
+	/*
+	 * Constructor
+	 * @param ps PerceptronSettings object containing perceptron settings
+	 */
 	public DeploymentSet(PerceptronSettings ps) {
 		super(ps.getDeploymentFile(), ps);
 		correctlyClassified = 0;
@@ -17,6 +29,12 @@ public class DeploymentSet extends PatternSet {
 //		printSet();
 	}
 
+	/*
+	 * isClassifiedCorrectly - Determines if a given output was classified correctly given a pattern index
+	 * @param calculatedOutput The output that is being tested for correctness
+	 * @param patternIndex The pattern the output is being compared to
+	 * @return Returns a boolean indicating a correct classification(true) or incorrect classification(false)
+	 */
 	public boolean isClassifiedCorrectly(int[] calculatedOutput, int patternIndex) {
 		Pattern classifiedPattern = super.patternSet[patternIndex];
 
@@ -35,14 +53,25 @@ public class DeploymentSet extends PatternSet {
 		return true;
 	}
 
+	/*
+	 * numCorrectlyClassifiedPatterns - Returns number of correctly classified patterns
+	 * @return Returns an int,the number of correctly classified patterns
+	 */
 	public int numCorrectlyClassifiedPatterns() {
 		return correctlyClassified;
 	}
 
+	/*
+	 * numIncorrecltyClassifiedPatterns - Returns the number of incorrectly classified patterns
+	 * @return Returns an int, the number of incorrectly classified patterns
+	 */
 	public int numIncorrecltyClassifiedPatterns() {
 		return incorrectlyClassified;
 	}
 
+	/*
+	 * logResults - Logs the results of deployment to a file deplployment_results_deploymentfile.txt
+	 */
 	public void logResults() {
 		BufferedWriter writer = null;
 		String outputFilename = "deployment_results_" + p_settings.getDeploymentFile() + ".txt";
